@@ -2,6 +2,7 @@ from flask import Flask, request
 import requests
 import os
 import json
+import re
 
 app = Flask(__name__)
 
@@ -9,9 +10,23 @@ BOT_TOKEN = "8851655567:AAEGziVSFXpZSAMD1hSjreZhP-OBfQUjvoc"
 ADMIN_CHAT_ID = "8625787020"
 VIDEO_FILE_ID = "BAACAgEAAxkBAAP7akugXF318MJWQ3616dZDkwJJ4hkAAnEHAALuAmBGFLl3swomiE88BA"
 
-# === ФАЙЛ ДЛЯ ХРАНЕНИЯ ПОЛЬЗОВАТЕЛЕЙ ===
+# === ФАЙЛЫ ДЛЯ ХРАНЕНИЯ ===
 USERS_FILE = "users.json"
+LANG_FILE = "lang.json"
+PENDING_FILE = "pending.json"
 
+# === ЗАГРУЗКА ДАННЫХ ===
+def load_json(file):
+    if os.path.exists(file):
+        with open(file, "r") as f:
+            return json.load(f)
+    return {}
+
+def save_json(file, data):
+    with open(file, "w") as f:
+        json.dump(data, f)
+
+# === СПИСОК ПОЛЬЗОВАТЕЛЕЙ ===
 if os.path.exists(USERS_FILE):
     with open(USERS_FILE, "r") as f:
         USERS = json.load(f)
@@ -25,9 +40,18 @@ def save_user(user_id):
             json.dump(USERS, f)
 
 # === ЯЗЫКИ ===
-user_lang = {}
-pending_reply = {}
+user_lang = load_json(LANG_FILE)
 
+# === АКТИВНЫЙ ДИАЛОГ ===
+pending_reply = load_json(PENDING_FILE)
+
+def save_pending():
+    save_json(PENDING_FILE, pending_reply)
+
+def save_lang():
+    save_json(LANG_FILE, user_lang)
+
+# === ТЕКСТЫ ===
 TEXTS = {
     "ru": {
         "welcome": "🌟 *Добро пожаловать в HackerBot!*\n\n🔐 *Я — твой помощник в мире взлома и безопасности.*\n\n📌 *Отправь текст, и наш админ свяжется с тобой в ближайшее время.*\n\n🔗 *Также здесь можно создать скам-ссылку для фишинга.*\n\n⏳ *Ожидание: 30 минут — 1 час.*\n\n🍞 *Удачи!*",
@@ -115,16 +139,11 @@ def webhook():
             # === ОТВЕТ НА СООБЩЕНИЕ (reply_to_message) ===
             reply_to = data['message'].get('reply_to_message')
             if reply_to:
-                # Пытаемся достать ID пользователя из текста
                 reply_text = reply_to.get('text', '')
-                # Ищем ID в формате (ID: 123456789)
-                import re
                 match = re.search(r'\(ID:\s*(\d+)\)', reply_text)
                 if match:
                     target_id = int(match.group(1))
-                    target_lang = user_lang.get(target_id, "ru")
-                    
-                    # Отправляем ответ пользователю
+                    target_lang = user_lang.get(str(target_id), "ru")
                     requests.post(
                         f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
                         json={
@@ -133,22 +152,19 @@ def webhook():
                             "parse_mode": "Markdown"
                         }
                     )
-                    
-                    # Подтверждение админу
                     requests.post(
                         f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
                         json={
                             "chat_id": ADMIN_CHAT_ID,
-                            "text": f"✅ *Ответ отправлен* пользователю (ID: {target_id})",
+                            "text": f"✅ *Ответ отправлен* (ID: {target_id})",
                             "parse_mode": "Markdown"
                         }
                     )
                     return "ok", 200
                 else:
-                    # Если не нашли ID — пробуем через pending_reply
                     if pending_reply.get("user_id"):
                         target_id = pending_reply["user_id"]
-                        target_lang = user_lang.get(target_id, "ru")
+                        target_lang = user_lang.get(str(target_id), "ru")
                         requests.post(
                             f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
                             json={
@@ -166,13 +182,14 @@ def webhook():
                             }
                         )
                         pending_reply = {}
+                        save_pending()
                         return "ok", 200
                     else:
                         requests.post(
                             f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
                             json={
                                 "chat_id": ADMIN_CHAT_ID,
-                                "text": "⚠️ *Не удалось определить получателя. Ответь на сообщение с ID пользователя.*",
+                                "text": "⚠️ *Не удалось определить получателя.*",
                                 "parse_mode": "Markdown"
                             }
                         )
@@ -184,7 +201,7 @@ def webhook():
                     f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
                     json={
                         "chat_id": ADMIN_CHAT_ID,
-                        "text": "👋 *Привет, админ! Бот работает.*\n📌 *Отвечай на сообщения пользователей.*",
+                        "text": "👋 *Привет, админ! Бот работает.*",
                         "parse_mode": "Markdown",
                         "reply_markup": MAIN_KEYBOARD_RU
                     }
@@ -193,12 +210,12 @@ def webhook():
 
             if text == '/help':
                 help_text = (
-                    "📋 *Доступные команды для админа:*\n\n"
-                    "🔹 `/help` — показать это сообщение\n"
-                    "🔹 `/users` — показать количество пользователей\n"
-                    "🔹 `/reply Текст` — ответить последнему пользователю\n"
-                    "🔹 `/sendall Текст` — разослать сообщение всем пользователям\n\n"
-                    "📌 *Также можно зажать сообщение от бота и нажать 'Ответить' — ответ улетит пользователю.*"
+                    "📋 *Команды:*\n"
+                    "/help — помощь\n"
+                    "/users — кол-во пользователей\n"
+                    "/reply Текст — ответить\n"
+                    "/sendall Текст — рассылка\n\n"
+                    "📌 *Зажми сообщение → Ответить*"
                 )
                 requests.post(
                     f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
@@ -248,8 +265,7 @@ def webhook():
                     if pending_reply.get("user_id"):
                         target_id = pending_reply["user_id"]
                         target_username = pending_reply.get("username", "anon")
-                        target_lang = user_lang.get(target_id, "ru")
-                        
+                        target_lang = user_lang.get(str(target_id), "ru")
                         requests.post(
                             f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
                             json={
@@ -258,7 +274,6 @@ def webhook():
                                 "parse_mode": "Markdown"
                             }
                         )
-                        
                         requests.post(
                             f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
                             json={
@@ -268,13 +283,14 @@ def webhook():
                             }
                         )
                         pending_reply = {}
+                        save_pending()
                         return "ok", 200
                     else:
                         requests.post(
                             f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
                             json={
                                 "chat_id": ADMIN_CHAT_ID,
-                                "text": "⚠️ *Нет активного диалога. Сначала получи сообщение от пользователя.*",
+                                "text": "⚠️ *Нет активного диалога.*",
                                 "parse_mode": "Markdown"
                             }
                         )
@@ -284,18 +300,17 @@ def webhook():
                         f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
                         json={
                             "chat_id": ADMIN_CHAT_ID,
-                            "text": "⚠️ *Используй формат:* `/reply Текст ответа`",
+                            "text": "⚠️ *Используй:* `/reply Текст`",
                             "parse_mode": "Markdown"
                         }
                     )
                     return "ok", 200
 
-            # === ОБЫЧНЫЙ ТЕКСТ ОТ АДМИНА (если не команда и не ответ на сообщение) ===
+            # === ОБЫЧНЫЙ ТЕКСТ ОТ АДМИНА ===
             if pending_reply.get("user_id"):
                 target_id = pending_reply["user_id"]
                 target_username = pending_reply.get("username", "anon")
-                target_lang = user_lang.get(target_id, "ru")
-                
+                target_lang = user_lang.get(str(target_id), "ru")
                 requests.post(
                     f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
                     json={
@@ -304,7 +319,6 @@ def webhook():
                         "parse_mode": "Markdown"
                     }
                 )
-                
                 requests.post(
                     f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
                     json={
@@ -314,13 +328,14 @@ def webhook():
                     }
                 )
                 pending_reply = {}
+                save_pending()
                 return "ok", 200
             else:
                 requests.post(
                     f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
                     json={
                         "chat_id": ADMIN_CHAT_ID,
-                        "text": "⚠️ *Нет активного диалога. Сначала получи сообщение от пользователя.*",
+                        "text": "⚠️ *Нет активного диалога.*",
                         "parse_mode": "Markdown"
                     }
                 )
@@ -330,8 +345,9 @@ def webhook():
         save_user(user_id)
         pending_reply["user_id"] = user_id
         pending_reply["username"] = username
+        save_pending()
 
-        lang = user_lang.get(user_id, "ru")
+        lang = user_lang.get(str(user_id), "ru")
         t = TEXTS[lang]
 
         # Смена языка
@@ -347,7 +363,8 @@ def webhook():
             return "ok", 200
 
         if text == "🇷🇺 Русский":
-            user_lang[user_id] = "ru"
+            user_lang[str(user_id)] = "ru"
+            save_lang()
             requests.post(
                 f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
                 json={
@@ -360,7 +377,8 @@ def webhook():
             return "ok", 200
 
         if text == "🇬🇧 English":
-            user_lang[user_id] = "en"
+            user_lang[str(user_id)] = "en"
+            save_lang()
             requests.post(
                 f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
                 json={
@@ -372,7 +390,7 @@ def webhook():
             )
             return "ok", 200
 
-        # === ОТПРАВКА АДМИНУ (карточка + текст) ===
+        # === ОТПРАВКА АДМИНУ ===
         card = (
             f"{t['card_title']}\n"
             f"─────────────────\n"
@@ -398,7 +416,7 @@ def webhook():
             }
         )
 
-        # === ОБРАБОТКА КНОПОК (для пользователя) ===
+        # === ОБРАБОТКА КНОПОК ===
         keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
 
         if text == '/start':
