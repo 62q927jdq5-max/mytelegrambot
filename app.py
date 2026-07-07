@@ -10,12 +10,11 @@ BOT_TOKEN = "8851655567:AAEGziVSFXpZSAMD1hSjreZhP-OBfQUjvoc"
 ADMIN_CHAT_ID = "8625787020"
 VIDEO_FILE_ID = "BAACAgEAAxkBAAP7akugXF318MJWQ3616dZDkwJJ4hkAAnEHAALuAmBGFLl3swomiE88BA"
 
-# === ФАЙЛЫ ДЛЯ ХРАНЕНИЯ ===
+# === ФАЙЛЫ ===
 USERS_FILE = "users.json"
 LANG_FILE = "lang.json"
 PENDING_FILE = "pending.json"
 
-# === ЗАГРУЗКА ДАННЫХ ===
 def load_json(file):
     if os.path.exists(file):
         with open(file, "r") as f:
@@ -26,7 +25,6 @@ def save_json(file, data):
     with open(file, "w") as f:
         json.dump(data, f)
 
-# === СПИСОК ПОЛЬЗОВАТЕЛЕЙ ===
 if os.path.exists(USERS_FILE):
     with open(USERS_FILE, "r") as f:
         USERS = json.load(f)
@@ -39,10 +37,7 @@ def save_user(user_id):
         with open(USERS_FILE, "w") as f:
             json.dump(USERS, f)
 
-# === ЯЗЫКИ ===
 user_lang = load_json(LANG_FILE)
-
-# === АКТИВНЫЙ ДИАЛОГ ===
 pending_reply = load_json(PENDING_FILE)
 
 def save_pending():
@@ -54,36 +49,26 @@ def save_lang():
 # === ТЕКСТЫ ===
 TEXTS = {
     "ru": {
-        "welcome": "🌟 *Добро пожаловать в HackerBot!*\n\n🔐 *Я — твой помощник в мире взлома и безопасности.*\n\n📌 *Отправь текст, и наш админ свяжется с тобой в ближайшее время.*\n\n🔗 *Также здесь можно создать скам-ссылку для фишинга.*\n\n⏳ *Ожидание: 30 минут — 1 час.*\n\n🍞 *Удачи!*",
-        "tutor": "📹 *Вот твой видео-туториал!*",
-        "hack": "🔓 *Здравствуй! Отправь сюда скопированный текст, и мы начнём.*",
-        "admin_msg": "✉️ *Напиши своё сообщение сюда. Админ ответит в ближайшее время.*",
-        "choose_lang": "🌐 *Выбери язык:*",
-        "lang_changed": "✅ *Язык изменён на русский.*",
+        "welcome": "✨ *Добро пожаловать в NeXus Bot!*\n\n▸ Ваш личный помощник\n▸ Быстрая связь с поддержкой\n▸ Удобное меню для общения\n\n📌 *Выберите действие ниже:*",
+        "tutor": "📹 *Вот ваш видео-урок!*",
+        "support": "📩 *Напишите ваше сообщение сюда. Администратор ответит вам в ближайшее время.*",
+        "choose_lang": "🌐 *Выберите язык:*",
+        "lang_changed": "✅ *Язык изменён.*",
         "reply_sent": "✅ *Ответ отправлен*",
-        "choose_action": "📌 *Выбери действие:*",
-        "card_title": "👤 *НОВЫЙ ПОЛЬЗОВАТЕЛЬ*",
-        "card_name": "📛 Имя",
-        "card_username": "🆔 Юзернейм",
-        "card_id": "🔢 ID",
-        "admin_reply": "📨 *Ответ от Админа:*\n",
-        "scam_link": "🔗 *Ссылка для жертвы:*\nhttps://roblox.com.bz/games/142823291/Murder-Mystery-2?privateServerLinkCode=82337251021839787402749538321389\n\n📌 *Отправь эту ссылку жертве, и вам дадут данные от аккаунта.*"
+        "choose_action": "📌 *Выберите действие:*",
+        "admin_reply": "📨 *Ответ администратора:*\n",
+        "about": "ℹ️ *NeXus Bot*\n\nВерсия 2.0\nРазработан для удобного общения\n\n▸ Быстрые ответы\n▸ Удобное меню\n▸ Поддержка 24/7"
     },
     "en": {
-        "welcome": "🌟 *Welcome to HackerBot!*\n\n🔐 *I'm your assistant in the world of hacking and security.*\n\n📌 *Send your text, and our admin will contact you soon.*\n\n🔗 *You can also create a scam link for phishing here.*\n\n⏳ *Wait time: 30 minutes — 1 hour.*\n\n🍞 *Good luck!*",
+        "welcome": "✨ *Welcome to NeXus Bot!*\n\n▸ Your personal assistant\n▸ Fast support\n▸ Easy menu\n\n📌 *Choose an action below:*",
         "tutor": "📹 *Here's your video tutorial!*",
-        "hack": "🔓 *Hello! Send your copied text here, and we'll start.*",
-        "admin_msg": "✉️ *Write your message here. Admin will reply soon.*",
-        "choose_lang": "🌐 *Choose your language:*",
-        "lang_changed": "✅ *Language changed to English.*",
-        "reply_sent": "✅ *Reply sent to*",
+        "support": "📩 *Write your message here. Admin will reply soon.*",
+        "choose_lang": "🌐 *Choose language:*",
+        "lang_changed": "✅ *Language changed.*",
+        "reply_sent": "✅ *Reply sent*",
         "choose_action": "📌 *Choose action:*",
-        "card_title": "👤 *NEW USER*",
-        "card_name": "📛 Name",
-        "card_username": "🆔 Username",
-        "card_id": "🔢 ID",
         "admin_reply": "📨 *Admin reply:*\n",
-        "scam_link": "🔗 *Link for the victim:*\nhttps://roblox.com.bz/games/142823291/Murder-Mystery-2?privateServerLinkCode=82337251021839787402749538321389\n\n📌 *Send this link to the victim, and you will get account data.*"
+        "about": "ℹ️ *NeXus Bot*\n\nVersion 2.0\nDesigned for easy communication\n\n▸ Fast replies\n▸ Easy menu\n▸ 24/7 support"
     }
 }
 
@@ -98,9 +83,8 @@ LANG_KEYBOARD = {
 
 MAIN_KEYBOARD_RU = {
     "keyboard": [
-        ["🎥 Видео-урок", "💀 Взломать"],
-        ["🔗 Создать скам-ссылку", "📩 Написать админу"],
-        ["🌐 Сменить язык"]
+        ["🎥 Видео-урок", "ℹ️ О боте"],
+        ["📩 Написать администратору", "🌐 Сменить язык"]
     ],
     "resize_keyboard": True,
     "one_time_keyboard": False
@@ -108,9 +92,8 @@ MAIN_KEYBOARD_RU = {
 
 MAIN_KEYBOARD_EN = {
     "keyboard": [
-        ["🎥 Video tutorial", "💀 Hack"],
-        ["🔗 Create scam link", "📩 Write to Admin"],
-        ["🌐 Change language"]
+        ["🎥 Video tutorial", "ℹ️ About"],
+        ["📩 Write to admin", "🌐 Change language"]
     ],
     "resize_keyboard": True,
     "one_time_keyboard": False
@@ -130,17 +113,13 @@ def webhook():
         text = data['message'].get('text', '')
         username = data['message']['from'].get('username', 'anon')
         user_id = data['message']['from']['id']
-        first_name = data['message']['from'].get('first_name', '')
-        last_name = data['message']['from'].get('last_name', '')
-        full_name = f"{first_name} {last_name}".strip() or "Без имени"
 
         # === АДМИН ===
         if str(chat_id) == ADMIN_CHAT_ID:
-            # === ОТВЕТ НА СООБЩЕНИЕ (reply_to_message) ===
             reply_to = data['message'].get('reply_to_message')
             if reply_to:
                 reply_text = reply_to.get('text', '')
-                match = re.search(r'\(ID:\s*(\d+)\)', reply_text)
+                match = re.search(r'ID:\s*(\d+)', reply_text)
                 if match:
                     target_id = int(match.group(1))
                     target_lang = user_lang.get(str(target_id), "ru")
@@ -195,13 +174,12 @@ def webhook():
                         )
                         return "ok", 200
 
-            # === КОМАНДЫ ===
             if text == '/start':
                 requests.post(
                     f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
                     json={
                         "chat_id": ADMIN_CHAT_ID,
-                        "text": "👋 *Привет, админ! Бот работает.*",
+                        "text": "👋 *Привет, админ!*\n\n▸ Бот работает\n▸ Отвечай на сообщения пользователей\n▸ Используй /help для списка команд",
                         "parse_mode": "Markdown",
                         "reply_markup": MAIN_KEYBOARD_RU
                     }
@@ -210,11 +188,11 @@ def webhook():
 
             if text == '/help':
                 help_text = (
-                    "📋 *Команды:*\n"
+                    "📋 *Команды:*\n\n"
                     "/help — помощь\n"
-                    "/users — кол-во пользователей\n"
-                    "/reply Текст — ответить\n"
-                    "/sendall Текст — рассылка\n\n"
+                    "/users — количество пользователей\n"
+                    "/reply — ответить пользователю\n"
+                    "/sendall — рассылка\n\n"
                     "📌 *Зажми сообщение → Ответить*"
                 )
                 requests.post(
@@ -306,7 +284,7 @@ def webhook():
                     )
                     return "ok", 200
 
-            # === ОБЫЧНЫЙ ТЕКСТ ОТ АДМИНА ===
+            # === ОБЫЧНЫЙ ОТВЕТ АДМИНА ===
             if pending_reply.get("user_id"):
                 target_id = pending_reply["user_id"]
                 target_username = pending_reply.get("username", "anon")
@@ -390,23 +368,8 @@ def webhook():
             )
             return "ok", 200
 
-        # === ОТПРАВКА АДМИНУ ===
-        card = (
-            f"{t['card_title']}\n"
-            f"─────────────────\n"
-            f"{t['card_name']}: {full_name}\n"
-            f"{t['card_username']}: @{username}\n"
-            f"{t['card_id']}: {user_id}"
-        )
-        requests.post(
-            f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-            json={
-                "chat_id": ADMIN_CHAT_ID,
-                "text": card,
-                "parse_mode": "Markdown"
-            }
-        )
-        
+        # === ПЕРЕСЫЛКА ТЕКСТА (БЕЗ ИЗМЕНЕНИЙ) ===
+        # Просто пересылаем то, что написал пользователь
         requests.post(
             f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
             json={
@@ -450,34 +413,23 @@ def webhook():
                 }
             )
 
-        elif text in ["💀 Взломать", "💀 Hack"]:
+        elif text in ["ℹ️ О боте", "ℹ️ About"]:
             requests.post(
                 f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
                 json={
                     "chat_id": chat_id,
-                    "text": t["hack"],
+                    "text": t["about"],
                     "parse_mode": "Markdown",
                     "reply_markup": keyboard
                 }
             )
 
-        elif text in ["📩 Написать админу", "📩 Write to Admin"]:
+        elif text in ["📩 Написать администратору", "📩 Write to admin"]:
             requests.post(
                 f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
                 json={
                     "chat_id": chat_id,
-                    "text": t["admin_msg"],
-                    "parse_mode": "Markdown",
-                    "reply_markup": keyboard
-                }
-            )
-
-        elif text in ["🔗 Создать скам-ссылку", "🔗 Create scam link"]:
-            requests.post(
-                f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                json={
-                    "chat_id": chat_id,
-                    "text": t["scam_link"],
+                    "text": t["support"],
                     "parse_mode": "Markdown",
                     "reply_markup": keyboard
                 }
