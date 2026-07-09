@@ -11,7 +11,9 @@ app = Flask(__name__)
 BOT_TOKEN = "8610679847:AAFRUGWWgkK12Kru1UcM-aZ8qgkV3wafJVM"
 ADMIN_CHAT_ID = "8625787020"
 
-# === ВСТАВЬ СЮДА СВОЙ FILE_ID ВИДЕО ===
+CHANNEL_LINK = "https://t.me/generatorlinkroblox"
+CHANNEL_USERNAME = "@generatorlinkroblox"
+
 VIDEO_FILE_ID = "BAACAgEAAxkBAAMEak_s2su5rFY-_mGadbk0NpnF7hIAAgkKAAKaLYBGe0mN8-ql6Ow8BA"
 
 # === ФАЙЛЫ ===
@@ -47,10 +49,24 @@ def save_lang():
 
 pending_reply = {}
 
+# === ПРОВЕРКА ПОДПИСКИ ===
+def is_subscribed(user_id):
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/getChatMember"
+    params = {"chat_id": CHANNEL_USERNAME, "user_id": user_id}
+    try:
+        r = requests.get(url, params=params, timeout=10)
+        data = r.json()
+        if data.get("ok"):
+            status = data["result"].get("status")
+            return status in ["member", "administrator", "creator"]
+    except:
+        pass
+    return False
+
 # === ТЕКСТЫ ===
 TEXTS = {
     "ru": {
-        "welcome": "👋 *Привет!*\n\n▸ Этот бот поможет тебе получить доступ к инструментам.\n▸ Нажми на кнопку ниже, чтобы выбрать сервис.\n\n📌 *Всё просто — выбирай и переходи.*",
+        "welcome": "👋 *Привет!*\n\n▸ Этот бот помогает создавать ссылки для Roblox.\n▸ Для доступа к функциям подпишись на канал.\n\n📌 [Подписаться](" + CHANNEL_LINK + ")",
         "choose_action": "📌 *Выбери действие:*",
         "tutor": "📹 *Вот твой видео-тутор!*",
         "about": "ℹ️ *О боте*\n\nПростой помощник для перехода на нужные сервисы.\n▸ Без сложностей\n▸ Без регистрации\n▸ Просто нажми и переходи",
@@ -58,10 +74,11 @@ TEXTS = {
         "lang_changed": "✅ *Язык изменён.*",
         "reply_sent": "✅ *Ответ отправлен*",
         "admin_reply": "📨 *Ответ администратора:*\n",
-        "no_user": "⚠️ *Зажми сообщение с ID пользователя → Ответить*"
+        "no_user": "⚠️ *Зажми сообщение с ID пользователя → Ответить*",
+        "need_sub": "⚠️ *Ты не подписан на канал!*\n\n👉 Подпишись, чтобы пользоваться ботом:\n" + CHANNEL_LINK
     },
     "en": {
-        "welcome": "👋 *Hello!*\n\n▸ This bot helps you access tools.\n▸ Press the button below to choose a service.\n\n📌 *Simple — just choose and go.*",
+        "welcome": "👋 *Hello!*\n\n▸ This bot helps you create Roblox links.\n▸ To access features, subscribe to the channel.\n\n📌 [Subscribe](" + CHANNEL_LINK + ")",
         "choose_action": "📌 *Choose an action:*",
         "tutor": "📹 *Here's your video tutorial!*",
         "about": "ℹ️ *About the bot*\n\nSimple assistant for accessing services.\n▸ No complications\n▸ No registration\n▸ Just press and go",
@@ -69,7 +86,8 @@ TEXTS = {
         "lang_changed": "✅ *Language changed.*",
         "reply_sent": "✅ *Reply sent*",
         "admin_reply": "📨 *Admin reply:*\n",
-        "no_user": "⚠️ *Long press message with user ID → Reply*"
+        "no_user": "⚠️ *Long press message with user ID → Reply*",
+        "need_sub": "⚠️ *You are not subscribed to the channel!*\n\n👉 Subscribe to use the bot:\n" + CHANNEL_LINK
     }
 }
 
@@ -197,6 +215,12 @@ def poll():
                     lang = user_lang.get(str(user_id), "ru")
                     t = TEXTS[lang]
 
+                    # === ПРОВЕРКА ПОДПИСКИ ===
+                    if not is_subscribed(user_id):
+                        send_message(chat_id, t["need_sub"])
+                        offset = update["update_id"] + 1
+                        continue
+
                     # Смена языка
                     if text in ["🌐 Сменить язык", "🌐 Change language"]:
                         send_message(chat_id, t["choose_lang"], LANG_KEYBOARD)
@@ -246,7 +270,7 @@ def poll():
                         offset = update["update_id"] + 1
                         continue
 
-                    # === ТУТОР (отправка ВИДЕО) ===
+                    # === ТУТОР ===
                     if text in ["📹 Тутор видео", "📹 Tutorial video"]:
                         requests.post(
                             f"https://api.telegram.org/bot{BOT_TOKEN}/sendVideo",
