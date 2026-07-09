@@ -75,7 +75,7 @@ TEXTS = {
         "reply_sent": "✅ *Ответ отправлен*",
         "admin_reply": "📨 *Ответ администратора:*\n",
         "no_user": "⚠️ *Зажми сообщение с ID пользователя → Ответить*",
-        "need_sub": "⚠️ *Ты не подписан на канал!*\n\n👉 Подпишись, чтобы пользоваться ботом:\n" + CHANNEL_LINK
+        "need_sub": "⚠️ *Ты не подписан на канал!*\n\n👉 Нажми на кнопку ниже, чтобы подписаться."
     },
     "en": {
         "welcome": "👋 *Hello!*\n\n▸ This bot helps you create Roblox links.\n▸ To access features, subscribe to the channel.\n\n📌 [Subscribe](" + CHANNEL_LINK + ")",
@@ -87,7 +87,7 @@ TEXTS = {
         "reply_sent": "✅ *Reply sent*",
         "admin_reply": "📨 *Admin reply:*\n",
         "no_user": "⚠️ *Long press message with user ID → Reply*",
-        "need_sub": "⚠️ *You are not subscribed to the channel!*\n\n👉 Subscribe to use the bot:\n" + CHANNEL_LINK
+        "need_sub": "⚠️ *You are not subscribed to the channel!*\n\n👉 Press the button below to subscribe."
     }
 }
 
@@ -170,7 +170,7 @@ def poll():
                     username = msg["from"].get("username", "anon")
                     user_id = msg["from"]["id"]
 
-                    # === АДМИН: ответ через reply ===
+                    # === АДМИН ===
                     reply_to = msg.get("reply_to_message")
                     if reply_to and str(chat_id) == ADMIN_CHAT_ID:
                         reply_text = reply_to.get("text", "")
@@ -183,7 +183,6 @@ def poll():
                             offset = update["update_id"] + 1
                             continue
 
-                    # === АДМИН: команды ===
                     if str(chat_id) == ADMIN_CHAT_ID:
                         if text == '/users':
                             send_message(ADMIN_CHAT_ID, f"👥 *Всего пользователей:* {len(USERS)}")
@@ -210,14 +209,28 @@ def poll():
                             offset = update["update_id"] + 1
                             continue
 
-                    # === ОБЫЧНЫЕ ПОЛЬЗОВАТЕЛИ ===
+                    # === ПОЛЬЗОВАТЕЛИ ===
                     save_user(user_id)
                     lang = user_lang.get(str(user_id), "ru")
                     t = TEXTS[lang]
 
                     # === ПРОВЕРКА ПОДПИСКИ ===
                     if not is_subscribed(user_id):
-                        send_message(chat_id, t["need_sub"])
+                        # === ИНЛАЙН-КНОПКА ПОДПИСКИ ===
+                        inline_keyboard = {
+                            "inline_keyboard": [
+                                [{"text": "📢 Подписаться на канал", "url": CHANNEL_LINK}]
+                            ]
+                        }
+                        requests.post(
+                            f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
+                            json={
+                                "chat_id": chat_id,
+                                "text": t["need_sub"],
+                                "parse_mode": "Markdown",
+                                "reply_markup": inline_keyboard
+                            }
+                        )
                         offset = update["update_id"] + 1
                         continue
 
@@ -241,21 +254,18 @@ def poll():
                         offset = update["update_id"] + 1
                         continue
 
-                    # === НАЗАД ===
                     if text in ["🔙 Назад", "🔙 Back"]:
                         keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
                         send_message(chat_id, t["choose_action"], keyboard)
                         offset = update["update_id"] + 1
                         continue
 
-                    # === КНОПКА "Создать ссылку" ===
                     if text in ["🔗 Создать ссылку", "🔗 Create link"]:
                         keyboard = SERVICE_KEYBOARD_EN if lang == "en" else SERVICE_KEYBOARD_RU
                         send_message(chat_id, "⚡ *Выбери сервис:*", keyboard)
                         offset = update["update_id"] + 1
                         continue
 
-                    # === ВЫБОР СЕРВИСА ===
                     if text == "⚡ Immortal.st":
                         send_link(chat_id, "https://immortal.st/?code=NzA2NTI5NTE4NDExMTQxMjYwNg==")
                         keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
@@ -270,7 +280,6 @@ def poll():
                         offset = update["update_id"] + 1
                         continue
 
-                    # === ТУТОР ===
                     if text in ["📹 Тутор видео", "📹 Tutorial video"]:
                         requests.post(
                             f"https://api.telegram.org/bot{BOT_TOKEN}/sendVideo",
@@ -285,21 +294,18 @@ def poll():
                         offset = update["update_id"] + 1
                         continue
 
-                    # === О БОТЕ ===
                     if text in ["ℹ️ О боте", "ℹ️ About"]:
                         keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
                         send_message(chat_id, t["about"], keyboard)
                         offset = update["update_id"] + 1
                         continue
 
-                    # === СТАРТ ===
                     if text == '/start':
                         keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
                         send_message(chat_id, t["welcome"], keyboard)
                         offset = update["update_id"] + 1
                         continue
 
-                    # === ВСЁ ОСТАЛЬНОЕ ===
                     keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
                     send_message(chat_id, t["choose_action"], keyboard)
                     offset = update["update_id"] + 1
