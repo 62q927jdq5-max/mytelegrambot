@@ -8,7 +8,7 @@ import re
 
 app = Flask(__name__)
 
-BOT_TOKEN = "8851655567:AAEGziVSFXpZSAMD1hSjreZhP-OBfQUjvoc"
+BOT_TOKEN = "8610679847:AAFRUGWWgkK12Kru1UcM-aZ8qgkV3wafJVM"
 ADMIN_CHAT_ID = "8625787020"
 
 # === ВСТАВЬ СЮДА СВОЙ FILE_ID ВИДЕО ===
