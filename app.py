@@ -5,6 +5,7 @@ import json
 import time
 import threading
 import re
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -19,6 +20,7 @@ VIDEO_FILE_ID = "BAACAgEAAxkBAAMEak_s2su5rFY-_mGadbk0NpnF7hIAAgkKAAKaLYBGe0mN8-q
 # === ФАЙЛЫ ===
 USERS_FILE = "users.json"
 LANG_FILE = "lang.json"
+STATS_FILE = "stats.json"
 
 def load_json(file):
     if os.path.exists(file):
@@ -30,6 +32,7 @@ def save_json(file, data):
     with open(file, "w") as f:
         json.dump(data, f)
 
+# === ПОЛЬЗОВАТЕЛИ ===
 if os.path.exists(USERS_FILE):
     with open(USERS_FILE, "r") as f:
         USERS = json.load(f)
@@ -42,6 +45,32 @@ def save_user(user_id):
         with open(USERS_FILE, "w") as f:
             json.dump(USERS, f)
 
+# === СТАТИСТИКА ===
+default_stats = {
+    "total_users": 0,
+    "start_commands": 0,
+    "link_clicks": {
+        "immortal": 0,
+        "shockify": 0
+    },
+    "tutor_views": 0,
+    "service_selected": 0
+}
+
+stats = load_json(STATS_FILE)
+if not stats:
+    stats = default_stats
+    save_json(STATS_FILE, stats)
+
+def update_stats(key, subkey=None):
+    global stats
+    if subkey:
+        stats[key][subkey] = stats[key].get(subkey, 0) + 1
+    else:
+        stats[key] = stats.get(key, 0) + 1
+    save_json(STATS_FILE, stats)
+
+# === ЯЗЫКИ ===
 user_lang = load_json(LANG_FILE)
 
 def save_lang():
@@ -170,7 +199,25 @@ def poll():
                     username = msg["from"].get("username", "anon")
                     user_id = msg["from"]["id"]
 
-                    # === АДМИН ===
+                    # === АДМИН: СТАТИСТИКА ===
+                    if str(chat_id) == ADMIN_CHAT_ID and text == '/stats':
+                        stats_text = (
+                            "📊 *СТАТИСТИКА БОТА*\n"
+                            "─────────────────\n"
+                            f"👥 *Всего пользователей:* {len(USERS)}\n"
+                            f"📥 *Команд /start:* {stats.get('start_commands', 0)}\n"
+                            f"🔗 *Выбор сервиса:* {stats.get('service_selected', 0)}\n"
+                            "─────────────────\n"
+                            f"⚡ *Immortal.st:* {stats['link_clicks'].get('immortal', 0)}\n"
+                            f"⚡ *Shockify.st:* {stats['link_clicks'].get('shockify', 0)}\n"
+                            "─────────────────\n"
+                            f"📹 *Просмотров тутора:* {stats.get('tutor_views', 0)}"
+                        )
+                        send_message(ADMIN_CHAT_ID, stats_text)
+                        offset = update["update_id"] + 1
+                        continue
+
+                    # === АДМИН: ответ через reply ===
                     reply_to = msg.get("reply_to_message")
                     if reply_to and str(chat_id) == ADMIN_CHAT_ID:
                         reply_text = reply_to.get("text", "")
@@ -183,6 +230,7 @@ def poll():
                             offset = update["update_id"] + 1
                             continue
 
+                    # === АДМИН: команды ===
                     if str(chat_id) == ADMIN_CHAT_ID:
                         if text == '/users':
                             send_message(ADMIN_CHAT_ID, f"👥 *Всего пользователей:* {len(USERS)}")
@@ -209,14 +257,13 @@ def poll():
                             offset = update["update_id"] + 1
                             continue
 
-                    # === ПОЛЬЗОВАТЕЛИ ===
+                    # === ОБЫЧНЫЕ ПОЛЬЗОВАТЕЛИ ===
                     save_user(user_id)
                     lang = user_lang.get(str(user_id), "ru")
                     t = TEXTS[lang]
 
                     # === ПРОВЕРКА ПОДПИСКИ ===
                     if not is_subscribed(user_id):
-                        # === ИНЛАЙН-КНОПКА ПОДПИСКИ ===
                         inline_keyboard = {
                             "inline_keyboard": [
                                 [{"text": "📢 Подписаться на канал", "url": CHANNEL_LINK}]
@@ -263,6 +310,7 @@ def poll():
                     if text in ["🔗 Создать ссылку", "🔗 Create link"]:
                         keyboard = SERVICE_KEYBOARD_EN if lang == "en" else SERVICE_KEYBOARD_RU
                         send_message(chat_id, "⚡ *Выбери сервис:*", keyboard)
+                        update_stats("service_selected")
                         offset = update["update_id"] + 1
                         continue
 
@@ -270,6 +318,7 @@ def poll():
                         send_link(chat_id, "https://immortal.st/?code=NzA2NTI5NTE4NDExMTQxMjYwNg==")
                         keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
                         send_message(chat_id, t["choose_action"], keyboard)
+                        update_stats("link_clicks", "immortal")
                         offset = update["update_id"] + 1
                         continue
 
@@ -277,6 +326,7 @@ def poll():
                         send_link(chat_id, "https://shockify.st/?code=Mzc0NTc1NjEwNTMxNjIzNDQ2NA==")
                         keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
                         send_message(chat_id, t["choose_action"], keyboard)
+                        update_stats("link_clicks", "shockify")
                         offset = update["update_id"] + 1
                         continue
 
@@ -291,6 +341,7 @@ def poll():
                         )
                         keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
                         send_message(chat_id, t["choose_action"], keyboard)
+                        update_stats("tutor_views")
                         offset = update["update_id"] + 1
                         continue
 
@@ -303,6 +354,7 @@ def poll():
                     if text == '/start':
                         keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
                         send_message(chat_id, t["welcome"], keyboard)
+                        update_stats("start_commands")
                         offset = update["update_id"] + 1
                         continue
 
