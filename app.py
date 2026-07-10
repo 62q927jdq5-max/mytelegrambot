@@ -91,7 +91,7 @@ TEXTS = {
     "ru": {
         "welcome": "🔥 *Сюда!*\n\nТут ты можешь получить доступ к крутым инструментам.\n\n👉 *Подпишись на канал*, чтобы начать:",
         "main_menu": "⚡ *Выбери действие:*",
-        "tutor": "📹 *Видео-тутор*\n\n👇 *Заходи по кнопке и действуй по тутору:*",
+        "tutor": "📹 *Видео-тутор*",
         "about": "ℹ️ *О боте*\n\nПросто, быстро, без регистрации.\nНажимай и пользуйся.",
         "choose_service": "👇 *Заходи по кнопке и действуй по тутору:*",
         "need_sub": "⚠️ *Ты не подписан на канал!*\n\n👉 Нажми на кнопку ниже, чтобы подписаться.",
@@ -104,7 +104,7 @@ TEXTS = {
     "en": {
         "welcome": "🔥 *Come here!*\n\nHere you can access cool tools.\n\n👉 *Subscribe to the channel* to start:",
         "main_menu": "⚡ *Choose an action:*",
-        "tutor": "📹 *Video tutorial*\n\n👇 *Click the button and follow the tutorial:*",
+        "tutor": "📹 *Video tutorial*",
         "about": "ℹ️ *About the bot*\n\nSimple, fast, no registration.\nJust press and use.",
         "choose_service": "👇 *Click the button and follow the tutorial:*",
         "need_sub": "⚠️ *You are not subscribed to the channel!*\n\n👉 Press the button below to subscribe.",
