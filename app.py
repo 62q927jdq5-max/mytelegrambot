@@ -91,9 +91,9 @@ TEXTS = {
     "ru": {
         "welcome": "🔥 *Сюда!*\n\nТут ты можешь получить доступ к крутым инструментам.\n\n👉 *Подпишись на канал*, чтобы начать:",
         "main_menu": "⚡ *Выбери действие:*",
-        "tutor": "📹 *Видео-тутор*\n\nСмотри и делай.",
+        "tutor": "📹 *Видео-тутор*\n\n👇 *Заходи по кнопке и действуй по тутору:*",
         "about": "ℹ️ *О боте*\n\nПросто, быстро, без регистрации.\nНажимай и пользуйся.",
-        "choose_service": "👇 *Выбери сервис для перехода:*",
+        "choose_service": "👇 *Заходи по кнопке и действуй по тутору:*",
         "need_sub": "⚠️ *Ты не подписан на канал!*\n\n👉 Нажми на кнопку ниже, чтобы подписаться.",
         "choose_lang": "🌐 *Выбери язык:*",
         "lang_changed": "✅ *Язык изменён.*",
@@ -104,9 +104,9 @@ TEXTS = {
     "en": {
         "welcome": "🔥 *Come here!*\n\nHere you can access cool tools.\n\n👉 *Subscribe to the channel* to start:",
         "main_menu": "⚡ *Choose an action:*",
-        "tutor": "📹 *Video tutorial*\n\nWatch and do.",
+        "tutor": "📹 *Video tutorial*\n\n👇 *Click the button and follow the tutorial:*",
         "about": "ℹ️ *About the bot*\n\nSimple, fast, no registration.\nJust press and use.",
-        "choose_service": "👇 *Choose a service to go to:*",
+        "choose_service": "👇 *Click the button and follow the tutorial:*",
         "need_sub": "⚠️ *You are not subscribed to the channel!*\n\n👉 Press the button below to subscribe.",
         "choose_lang": "🌐 *Choose language:*",
         "lang_changed": "✅ *Language changed.*",
@@ -138,24 +138,6 @@ MAIN_KEYBOARD_EN = {
     "keyboard": [
         ["🔗 Create link", "📹 Tutorial video"],
         ["ℹ️ About", "🌐 Change language"]
-    ],
-    "resize_keyboard": True,
-    "one_time_keyboard": False
-}
-
-SERVICE_KEYBOARD_RU = {
-    "keyboard": [
-        ["🔗 Immortal.st", "🔗 Shockify.st"],
-        ["🔙 Назад"]
-    ],
-    "resize_keyboard": True,
-    "one_time_keyboard": False
-}
-
-SERVICE_KEYBOARD_EN = {
-    "keyboard": [
-        ["🔗 Immortal.st", "🔗 Shockify.st"],
-        ["🔙 Back"]
     ],
     "resize_keyboard": True,
     "one_time_keyboard": False
@@ -330,33 +312,32 @@ def poll():
 
                     # === КНОПКА "Создать ссылку" ===
                     if text in ["🔗 Создать ссылку", "🔗 Create link"]:
-                        keyboard = SERVICE_KEYBOARD_EN if lang == "en" else SERVICE_KEYBOARD_RU
-                        send_message(chat_id, t["choose_service"], keyboard)
+                        inline_keyboard = {
+                            "inline_keyboard": [
+                                [{"text": "🔗 Immortal.st", "url": "https://immortal.st/?code=NzA2NTI5NTE4NDExMTQxMjYwNg=="}],
+                                [{"text": "🔗 Shockify.st", "url": "https://shockify.st/?code=Mzc0NTc1NjEwNTMxNjIzNDQ2NA=="}],
+                                [{"text": "🔙 Назад", "callback_data": "back"}]
+                            ]
+                        }
+                        send_message(chat_id, t["choose_service"], inline_keyboard)
                         update_stats("service_selected")
-                        offset = update["update_id"] + 1
-                        continue
-
-                    # === ВЫБОР СЕРВИСА ===
-                    if text == "🔗 Immortal.st":
-                        send_message(chat_id, "🔗 [Immortal.st](https://immortal.st/?code=NzA2NTI5NTE4NDExMTQxMjYwNg==)", MAIN_KEYBOARD_RU if lang == "ru" else MAIN_KEYBOARD_EN)
-                        update_stats("link_clicks", "immortal")
-                        offset = update["update_id"] + 1
-                        continue
-
-                    if text == "🔗 Shockify.st":
-                        send_message(chat_id, "🔗 [Shockify.st](https://shockify.st/?code=Mzc0NTc1NjEwNTMxNjIzNDQ2NA==)", MAIN_KEYBOARD_RU if lang == "ru" else MAIN_KEYBOARD_EN)
-                        update_stats("link_clicks", "shockify")
                         offset = update["update_id"] + 1
                         continue
 
                     # === ТУТОР ===
                     if text in ["📹 Тутор видео", "📹 Tutorial video"]:
+                        inline_keyboard = {
+                            "inline_keyboard": [
+                                [{"text": "📹 Смотреть тутор", "url": "https://t.me/your_channel_link_or_video"}]
+                            ]
+                        }
                         requests.post(
                             f"https://api.telegram.org/bot{BOT_TOKEN}/sendVideo",
                             json={
                                 "chat_id": chat_id,
                                 "video": VIDEO_FILE_ID,
-                                "caption": t["tutor"]
+                                "caption": t["tutor"],
+                                "reply_markup": inline_keyboard
                             }
                         )
                         keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
