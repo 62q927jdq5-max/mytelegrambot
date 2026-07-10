@@ -19,6 +19,7 @@ VIDEO_FILE_ID = "BAACAgEAAxkBAAMEak_s2su5rFY-_mGadbk0NpnF7hIAAgkKAAKaLYBGe0mN8-q
 # === ФАЙЛЫ ===
 USERS_FILE = "users.json"
 LANG_FILE = "lang.json"
+STATS_FILE = "stats.json"
 
 def load_json(file):
     if os.path.exists(file):
@@ -49,6 +50,28 @@ def save_lang():
 
 pending_reply = {}
 
+# === СТАТИСТИКА ===
+default_stats = {
+    "total_users": 0,
+    "start_commands": 0,
+    "link_clicks": {"immortal": 0, "shockify": 0},
+    "tutor_views": 0,
+    "service_selected": 0
+}
+
+stats = load_json(STATS_FILE)
+if not stats:
+    stats = default_stats
+    save_json(STATS_FILE, stats)
+
+def update_stats(key, subkey=None):
+    global stats
+    if subkey:
+        stats[key][subkey] = stats[key].get(subkey, 0) + 1
+    else:
+        stats[key] = stats.get(key, 0) + 1
+    save_json(STATS_FILE, stats)
+
 # === ПРОВЕРКА ПОДПИСКИ ===
 def is_subscribed(user_id):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/getChatMember"
@@ -66,7 +89,7 @@ def is_subscribed(user_id):
 # === ТЕКСТЫ ===
 TEXTS = {
     "ru": {
-        "welcome": "🔥 *Сюда!*\n\nТут ты можешь получить доступ к крутым инструментам.\n\n👉 *Подпишись на канал*, чтобы начать:\n" + CHANNEL_LINK,
+        "welcome": "🔥 *Сюда!*\n\nТут ты можешь получить доступ к крутым инструментам.\n\n👉 *Подпишись на канал*, чтобы начать:",
         "main_menu": "⚡ *Выбери действие:*",
         "tutor": "📹 *Видео-тутор*\n\nСмотри и делай.",
         "about": "ℹ️ *О боте*\n\nПросто, быстро, без регистрации.\nНажимай и пользуйся.",
@@ -79,7 +102,7 @@ TEXTS = {
         "no_user": "⚠️ *Нет активного диалога.*"
     },
     "en": {
-        "welcome": "🔥 *Come here!*\n\nHere you can access cool tools.\n\n👉 *Subscribe to the channel* to start:\n" + CHANNEL_LINK,
+        "welcome": "🔥 *Come here!*\n\nHere you can access cool tools.\n\n👉 *Subscribe to the channel* to start:",
         "main_menu": "⚡ *Choose an action:*",
         "tutor": "📹 *Video tutorial*\n\nWatch and do.",
         "about": "ℹ️ *About the bot*\n\nSimple, fast, no registration.\nJust press and use.",
@@ -175,6 +198,197 @@ def poll():
                         if reply_to:
                             if pending_reply.get("user_id"):
                                 target_id = pending_reply["user_id"]
+                                target_lang = user_lang.get(str(target_id), "ru")
+                                send_message(target_id, TEXTS[target_lang]["admin_reply"] + text)
+                                send_message(ADMIN_CHAT_ID, f"✅ *Ответ отправлен* @{pending_reply.get('username', 'anon')}")
+                                pending_reply = {}
+                                offset = update["update_id"] + 1
+                                continue
+
+                        if text.startswith("/reply "):
+                            parts = text.split(" ", 2)
+                            if len(parts) >= 3 and parts[1].isdigit():
+                                target_id = int(parts[1])
+                                reply_text = parts[2]
+                                target_lang = user_lang.get(str(target_id), "ru")
+                                send_message(target_id, TEXTS[target_lang]["admin_reply"] + reply_text)
+                                send_message(ADMIN_CHAT_ID, f"✅ *Ответ отправлен* (ID: {target_id})")
+                            offset = update["update_id"] + 1
+                            continue
+
+                        if text == '/users':
+                            send_message(ADMIN_CHAT_ID, f"👥 *Всего пользователей:* {len(USERS)}")
+                            offset = update["update_id"] + 1
+                            continue
+
+                        if text == '/stats':
+                            stats_text = (
+                                "📊 *СТАТИСТИКА БОТА*\n"
+                                "─────────────────\n"
+                                f"👥 *Всего пользователей:* {len(USERS)}\n"
+                                f"📥 *Команд /start:* {stats.get('start_commands', 0)}\n"
+                                f"🔗 *Выбор сервиса:* {stats.get('service_selected', 0)}\n"
+                                "─────────────────\n"
+                                f"⚡ *Immortal.st:* {stats['link_clicks'].get('immortal', 0)}\n"
+                                f"⚡ *Shockify.st:* {stats['link_clicks'].get('shockify', 0)}\n"
+                                "─────────────────\n"
+                                f"📹 *Просмотров тутора:* {stats.get('tutor_views', 0)}"
+                            )
+                            send_message(ADMIN_CHAT_ID, stats_text)
+                            offset = update["update_id"] + 1
+                            continue
+
+                        if text.startswith('/sendall '):
+                            msg = text.replace("/sendall ", "")
+                            for uid in USERS:
+                                try:
+                                    send_message(uid, msg)
+                                except:
+                                    pass
+                            send_message(ADMIN_CHAT_ID, f"✅ *Рассылка отправлена* {len(USERS)} пользователям.")
+                            offset = update["update_id"] + 1
+                            continue
+
+                        if text == '/start':
+                            send_message(ADMIN_CHAT_ID, "👋 *Привет, админ!*\n\nБот работает.", MAIN_KEYBOARD_RU)
+                            offset = update["update_id"] + 1
+                            continue
+
+                        if text == '/help':
+                            help_text = (
+                                "📋 *Команды:*\n\n"
+                                "/help — помощь\n"
+                                "/users — количество пользователей\n"
+                                "/stats — статистика\n"
+                                "/reply ID Текст — ответить\n"
+                                "/sendall Текст — рассылка"
+                            )
+                            send_message(ADMIN_CHAT_ID, help_text)
+                            offset = update["update_id"] + 1
+                            continue
+
+                    # === ПОЛЬЗОВАТЕЛИ ===
+                    save_user(user_id)
+                    lang = user_lang.get(str(user_id), "ru")
+                    t = TEXTS[lang]
+
+                    # === ПРОВЕРКА ПОДПИСКИ ===
+                    if not is_subscribed(user_id):
+                        inline_keyboard = {
+                            "inline_keyboard": [
+                                [{"text": "📢 Подписаться на канал", "url": CHANNEL_LINK}]
+                            ]
+                        }
+                        requests.post(
+                            f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
+                            json={
+                                "chat_id": chat_id,
+                                "text": t["need_sub"],
+                                "parse_mode": "Markdown",
+                                "reply_markup": inline_keyboard
+                            }
+                        )
+                        offset = update["update_id"] + 1
+                        continue
+
+                    # === ПОСЛЕ ПОДПИСКИ ===
+                    if text == '/start':
+                        keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
+                        send_message(chat_id, t["main_menu"], keyboard)
+                        update_stats("start_commands")
+                        offset = update["update_id"] + 1
+                        continue
+
+                    # === СМЕНА ЯЗЫКА ===
+                    if text in ["🌐 Сменить язык", "🌐 Change language"]:
+                        send_message(chat_id, t["choose_lang"], LANG_KEYBOARD)
+                        offset = update["update_id"] + 1
+                        continue
+
+                    if text == "🇷🇺 Русский":
+                        user_lang[str(user_id)] = "ru"
+                        save_lang()
+                        keyboard = MAIN_KEYBOARD_RU
+                        send_message(chat_id, TEXTS["ru"]["lang_changed"], keyboard)
+                        offset = update["update_id"] + 1
+                        continue
+
+                    if text == "🇬🇧 English":
+                        user_lang[str(user_id)] = "en"
+                        save_lang()
+                        keyboard = MAIN_KEYBOARD_EN
+                        send_message(chat_id, TEXTS["en"]["lang_changed"], keyboard)
+                        offset = update["update_id"] + 1
+                        continue
+
+                    # === НАЗАД ===
+                    if text in ["🔙 Назад", "🔙 Back"]:
+                        keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
+                        send_message(chat_id, t["main_menu"], keyboard)
+                        offset = update["update_id"] + 1
+                        continue
+
+                    # === КНОПКА "Создать ссылку" ===
+                    if text in ["🔗 Создать ссылку", "🔗 Create link"]:
+                        keyboard = SERVICE_KEYBOARD_EN if lang == "en" else SERVICE_KEYBOARD_RU
+                        send_message(chat_id, t["choose_service"], keyboard)
+                        update_stats("service_selected")
+                        offset = update["update_id"] + 1
+                        continue
+
+                    # === ВЫБОР СЕРВИСА ===
+                    if text == "🔗 Immortal.st":
+                        send_message(chat_id, "🔗 [Immortal.st](https://immortal.st/?code=NzA2NTI5NTE4NDExMTQxMjYwNg==)", MAIN_KEYBOARD_RU if lang == "ru" else MAIN_KEYBOARD_EN)
+                        update_stats("link_clicks", "immortal")
+                        offset = update["update_id"] + 1
+                        continue
+
+                    if text == "🔗 Shockify.st":
+                        send_message(chat_id, "🔗 [Shockify.st](https://shockify.st/?code=Mzc0NTc1NjEwNTMxNjIzNDQ2NA==)", MAIN_KEYBOARD_RU if lang == "ru" else MAIN_KEYBOARD_EN)
+                        update_stats("link_clicks", "shockify")
+                        offset = update["update_id"] + 1
+                        continue
+
+                    # === ТУТОР ===
+                    if text in ["📹 Тутор видео", "📹 Tutorial video"]:
+                        requests.post(
+                            f"https://api.telegram.org/bot{BOT_TOKEN}/sendVideo",
+                            json={
+                                "chat_id": chat_id,
+                                "video": VIDEO_FILE_ID,
+                                "caption": t["tutor"]
+                            }
+                        )
+                        keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
+                        send_message(chat_id, t["main_menu"], keyboard)
+                        update_stats("tutor_views")
+                        offset = update["update_id"] + 1
+                        continue
+
+                    # === О БОТЕ ===
+                    if text in ["ℹ️ О боте", "ℹ️ About"]:
+                        keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
+                        send_message(chat_id, t["about"], keyboard)
+                        offset = update["update_id"] + 1
+                        continue
+
+                    # === ВСЁ ОСТАЛЬНОЕ ===
+                    keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
+                    send_message(chat_id, t["main_menu"], keyboard)
+                    offset = update["update_id"] + 1
+
+        except Exception as e:
+            print("Polling error:", e)
+        time.sleep(1)
+
+@app.route('/')
+def home():
+    return "Bot is alive!", 200
+
+if __name__ == "__main__":
+    threading.Thread(target=poll, daemon=True).start()
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)        target_id = pending_reply["user_id"]
                                 target_lang = user_lang.get(str(target_id), "ru")
                                 send_message(target_id, TEXTS[target_lang]["admin_reply"] + text)
                                 send_message(ADMIN_CHAT_ID, f"✅ *Ответ отправлен* @{pending_reply.get('username', 'anon')}")
