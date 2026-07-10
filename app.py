@@ -128,7 +128,7 @@ LANG_KEYBOARD = {
 MAIN_KEYBOARD_RU = {
     "keyboard": [
         ["🔗 Создать ссылку", "📹 Тутор видео"],
-        ["ℹ️ О боте", "🌐 Сменить язык"]
+        ["🌐 Сменить язык"]
     ],
     "resize_keyboard": True,
     "one_time_keyboard": False
@@ -137,7 +137,7 @@ MAIN_KEYBOARD_RU = {
 MAIN_KEYBOARD_EN = {
     "keyboard": [
         ["🔗 Create link", "📹 Tutorial video"],
-        ["ℹ️ About", "🌐 Change language"]
+        ["🌐 Change language"]
     ],
     "resize_keyboard": True,
     "one_time_keyboard": False
@@ -340,16 +340,6 @@ def poll():
                                 "reply_markup": inline_keyboard
                             }
                         )
-                        keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
-                        send_message(chat_id, t["main_menu"], keyboard)
-                        update_stats("tutor_views")
-                        offset = update["update_id"] + 1
-                        continue
-
-                    # === О БОТЕ ===
-                    if text in ["ℹ️ О боте", "ℹ️ About"]:
-                        keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
-                        send_message(chat_id, t["about"], keyboard)
                         offset = update["update_id"] + 1
                         continue
 
