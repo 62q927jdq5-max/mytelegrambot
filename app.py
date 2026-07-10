@@ -66,11 +66,11 @@ def is_subscribed(user_id):
 # === ТЕКСТЫ ===
 TEXTS = {
     "ru": {
-        "welcome": "✨ *Добро пожаловать!*\n\n▸ Здесь ты можешь получить доступ к полезным инструментам.\n▸ Подпишись на канал, чтобы начать.\n\n📌 [Подписаться](" + CHANNEL_LINK + ")",
-        "main_menu": "📌 *Главное меню*\n\n▸ Выбери нужный раздел.",
-        "tutor": "📹 *Видео-тутор*\n\nСмотри и повторяй.",
-        "about": "ℹ️ *О боте*\n\nПростой помощник для твоих задач.\n▸ Без сложностей\n▸ Без регистрации\n▸ Просто нажми и переходи",
-        "choose_service": "⚡ *Выбери сервис для перехода:*",
+        "welcome": "🔥 *Сюда!*\n\nТут ты можешь получить доступ к крутым инструментам.\n\n👉 *Подпишись на канал*, чтобы начать:\n" + CHANNEL_LINK,
+        "main_menu": "⚡ *Выбери действие:*",
+        "tutor": "📹 *Видео-тутор*\n\nСмотри и делай.",
+        "about": "ℹ️ *О боте*\n\nПросто, быстро, без регистрации.\nНажимай и пользуйся.",
+        "choose_service": "👇 *Выбери сервис для перехода:*",
         "need_sub": "⚠️ *Ты не подписан на канал!*\n\n👉 Нажми на кнопку ниже, чтобы подписаться.",
         "choose_lang": "🌐 *Выбери язык:*",
         "lang_changed": "✅ *Язык изменён.*",
@@ -79,11 +79,11 @@ TEXTS = {
         "no_user": "⚠️ *Нет активного диалога.*"
     },
     "en": {
-        "welcome": "✨ *Welcome!*\n\n▸ Here you can access useful tools.\n▸ Subscribe to the channel to start.\n\n📌 [Subscribe](" + CHANNEL_LINK + ")",
-        "main_menu": "📌 *Main menu*\n\n▸ Choose a section.",
-        "tutor": "📹 *Video tutorial*\n\nWatch and repeat.",
-        "about": "ℹ️ *About the bot*\n\nSimple assistant for your tasks.\n▸ No complications\n▸ No registration\n▸ Just press and go",
-        "choose_service": "⚡ *Choose a service to go to:*",
+        "welcome": "🔥 *Come here!*\n\nHere you can access cool tools.\n\n👉 *Subscribe to the channel* to start:\n" + CHANNEL_LINK,
+        "main_menu": "⚡ *Choose an action:*",
+        "tutor": "📹 *Video tutorial*\n\nWatch and do.",
+        "about": "ℹ️ *About the bot*\n\nSimple, fast, no registration.\nJust press and use.",
+        "choose_service": "👇 *Choose a service to go to:*",
         "need_sub": "⚠️ *You are not subscribed to the channel!*\n\n👉 Press the button below to subscribe.",
         "choose_lang": "🌐 *Choose language:*",
         "lang_changed": "✅ *Language changed.*",
@@ -145,9 +145,6 @@ def send_message(chat_id, text, reply_markup=None, parse_mode="Markdown"):
         payload["reply_markup"] = reply_markup
     requests.post(url, json=payload)
 
-def send_link(chat_id, url, text="🔗 *Перейдите по ссылке:*"):
-    send_message(chat_id, f"{text}\n\n{url}")
-
 def get_updates(offset=None):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/getUpdates"
     params = {"timeout": 30, "allowed_updates": ["message"]}
@@ -201,6 +198,15 @@ def poll():
                             offset = update["update_id"] + 1
                             continue
 
+                        if text == '/stats':
+                            stats_text = (
+                                "📊 *Статистика:*\n"
+                                f"👥 Пользователей: {len(USERS)}"
+                            )
+                            send_message(ADMIN_CHAT_ID, stats_text)
+                            offset = update["update_id"] + 1
+                            continue
+
                         if text.startswith('/sendall '):
                             msg = text.replace("/sendall ", "")
                             for uid in USERS:
@@ -222,6 +228,7 @@ def poll():
                                 "📋 *Команды:*\n\n"
                                 "/help — помощь\n"
                                 "/users — количество пользователей\n"
+                                "/stats — статистика\n"
                                 "/reply ID Текст — ответить\n"
                                 "/sendall Текст — рассылка"
                             )
@@ -256,7 +263,7 @@ def poll():
                     # === ПОСЛЕ ПОДПИСКИ ===
                     if text == '/start':
                         keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
-                        send_message(chat_id, t["main_menu"], keyboard)
+                        send_message(chat_id, t["welcome"], keyboard)
                         offset = update["update_id"] + 1
                         continue
 
@@ -296,18 +303,14 @@ def poll():
                         offset = update["update_id"] + 1
                         continue
 
-                    # === ВЫБОР СЕРВИСА (ОТКРЫВАЕТ САЙТ) ===
+                    # === ВЫБОР СЕРВИСА ===
                     if text == "🔗 Immortal.st":
-                        send_link(chat_id, "https://immortal.st/?code=NzA2NTI5NTE4NDExMTQxMjYwNg==")
-                        keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
-                        send_message(chat_id, t["main_menu"], keyboard)
+                        send_message(chat_id, "🔗 [Immortal.st](https://immortal.st/?code=NzA2NTI5NTE4NDExMTQxMjYwNg==)", MAIN_KEYBOARD_RU if lang == "ru" else MAIN_KEYBOARD_EN)
                         offset = update["update_id"] + 1
                         continue
 
                     if text == "🔗 Shockify.st":
-                        send_link(chat_id, "https://shockify.st/?code=Mzc0NTc1NjEwNTMxNjIzNDQ2NA==")
-                        keyboard = MAIN_KEYBOARD_EN if lang == "en" else MAIN_KEYBOARD_RU
-                        send_message(chat_id, t["main_menu"], keyboard)
+                        send_message(chat_id, "🔗 [Shockify.st](https://shockify.st/?code=Mzc0NTc1NjEwNTMxNjIzNDQ2NA==)", MAIN_KEYBOARD_RU if lang == "ru" else MAIN_KEYBOARD_EN)
                         offset = update["update_id"] + 1
                         continue
 
